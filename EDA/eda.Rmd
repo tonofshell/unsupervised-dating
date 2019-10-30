@@ -2,29 +2,83 @@
 title: "Exploratory Data Analysis"
 author: "Adam Shelton"
 date: "10/29/2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(skimr)
+library(knitr)
+library(kableExtra)
+library(corrplot)
+library(GoodmanKruskal)
+library(GGally)
+library(treemapify)
+
+knitr::opts_chunk$set(echo = TRUE, fig.height = 8, fig.width = 10, dpi = 300)
+
+fix_nas = function(data_set, na_strs) {
+  library(tidyverse)
+  for (var in names(data_set)) {
+    data_set[[var]][data_set[[var]] %in% na_strs] = NA
+  }
+  return(data_set)
+}
+
+collapse_to_other = function(variable, n_categories, ...) {
+  library(tidyverse)
+  if (length(unique(variable)) > n_categories) {
+    var_table = variable %>% table() %>% as_tibble() %>% arrange(-n)
+    other_cats = var_table$.[n_categories:length(var_table$.)]
+    variable = variable %>% as.character()
+    variable[variable %in% other_cats] = "Other"
+  }
+  return(variable)
+}
 ```
 
-## R Markdown
+## Data Preparation
+```{r data-import}
+raw_data = read_csv(here("Data", "compressed_okcupid.csv")) 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+collapse_ethnicity =  Vectorize(function(x) {
+  if (str_detect(x, ",")) {
+    if (str_detect(str_to_lower(x), "white")) {
+      return("Multi / white")
+    }
+    return("Multi")
+  }
+  return(str_to_sentence(x))
+})
+cleaned_data = raw_data %>% fix_nas(c("unknown")) %>% mutate(race_ethnicity = collapse_ethnicity(ethnicity), X1 = NULL) %>% mutate_if((function(x) length(unique(x)) < 20), factor)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Descriptive Statistics
+```{r desc-stats}
+data_descriptives = cleaned_data %>% skim_to_list() 
+data_descriptives[[1]] %>% kable(caption = "Text Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+data_descriptives[[2]] %>% kable(caption = "Categorical Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+data_descriptives[[3]] %>% kable(caption = "Continuous Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Visualizations
+
+### Continuous Variables
+```{r num-viz}
+cleaned_data %>% select_if(is.numeric) %>% ggpairs(progress = FALSE)
+```
+
+### Categorical Variables
+```{r factors-viz}
+cleaned_data %>% select_if(is.factor) %>% pivot_longer(dplyr::everything()) %>% table() %>% as_tibble() %>% ggplot(aes(area = n, fill = value, label = value)) + geom_treemap() + geom_treemap_text(color = "white", place = "centre", grow = TRUE) + facet_wrap(~ name) + theme(legend.position = "none")
+
+cleaned_data %>% select_if(is.factor) %>% na.omit() %>% mutate_all(collapse_to_other, n_categories = 4) %>% ggpairs(progress = FALSE) + theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+
+
