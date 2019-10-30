@@ -127,8 +127,7 @@ full_data_descriptives[[1]] %>% kable(caption = "Text Variables") %>% kable_styl
 full_data_descriptives[[2]] %>% kable(caption = "Categorical Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
 full_data_descriptives[[4]] %>% kable(caption = "Dummy Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
 full_data_descriptives[[5]] %>% kable(caption = "Continuous Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
-full_data_descriptives[[3]] %>% kable(caption = "Date-time Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
-full_data_descriptives[[6]] %>% kable(caption = "Time Period Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+full_data_descriptives[[6]] %>% kable(caption = "Date-time Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
 ```
 
 ### Visualizations
