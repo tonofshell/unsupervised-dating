@@ -16,11 +16,13 @@ library(skimr)
 library(knitr)
 library(kableExtra)
 library(corrplot)
-library(GoodmanKruskal)
 library(GGally)
 library(treemapify)
+library(lubridate)
 
 knitr::opts_chunk$set(echo = TRUE, fig.height = 8, fig.width = 10, dpi = 300)
+
+source(here::here("Data", "get_data.R"))
 
 fix_nas = function(data_set, na_strs) {
   library(tidyverse)
@@ -37,28 +39,34 @@ collapse_to_other = function(variable, n_categories, ...) {
     other_cats = var_table$.[n_categories:length(var_table$.)]
     variable = variable %>% as.character()
     variable[variable %in% other_cats] = "Other"
+    variable[str_to_lower(variable) == "other"] = "Other"
   }
   return(variable)
 }
 ```
 
-## Data Preparation
+## Previously Processed Dataset
+
+### Data Preparation
 ```{r data-import}
-raw_data = read_csv(here("Data", "compressed_okcupid.csv")) 
+raw_data = read_csv(here::here("Data", "compressed_okcupid.csv")) 
 
 collapse_ethnicity =  Vectorize(function(x) {
+  if (is.na(x)) {
+    return(x)
+  }
   if (str_detect(x, ",")) {
     if (str_detect(str_to_lower(x), "white")) {
-      return("Multi / white")
+      return("multi / white")
     }
-    return("Multi")
+    return("multi")
   }
-  return(str_to_sentence(x))
+  return(str_to_lower(x))
 })
 cleaned_data = raw_data %>% fix_nas(c("unknown")) %>% mutate(race_ethnicity = collapse_ethnicity(ethnicity), X1 = NULL) %>% mutate_if((function(x) length(unique(x)) < 20), factor)
 ```
 
-## Descriptive Statistics
+### Descriptive Statistics
 ```{r desc-stats}
 data_descriptives = cleaned_data %>% skim_to_list() 
 data_descriptives[[1]] %>% kable(caption = "Text Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
@@ -66,19 +74,76 @@ data_descriptives[[2]] %>% kable(caption = "Categorical Variables") %>% kable_st
 data_descriptives[[3]] %>% kable(caption = "Continuous Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
 ```
 
-## Visualizations
+### Visualizations
 
-### Continuous Variables
+#### Continuous Variables
 ```{r num-viz}
-cleaned_data %>% select_if(is.numeric) %>% ggpairs(progress = FALSE)
+cleaned_data %>% select_if(is.numeric) %>% ggpairs(progress = FALSE) + theme(axis.text.x = element_text(angle = 20, hjust = 1))
 ```
 
-### Categorical Variables
+#### Categorical Variables
 ```{r factors-viz}
 cleaned_data %>% select_if(is.factor) %>% pivot_longer(dplyr::everything()) %>% table() %>% as_tibble() %>% ggplot(aes(area = n, fill = value, label = value)) + geom_treemap() + geom_treemap_text(color = "white", place = "centre", grow = TRUE) + facet_wrap(~ name) + theme(legend.position = "none")
 
 cleaned_data %>% select_if(is.factor) %>% na.omit() %>% mutate_all(collapse_to_other, n_categories = 4) %>% ggpairs(progress = FALSE) + theme(axis.text.x = element_text(angle = 20, hjust = 1))
 ```
 
+## Full Dataset
 
+### Data Preparation
+```{r full-data-prep}
+full_raw_data = read_csv(here::here("Data", "full_ok_cupid.csv")) 
 
+get_first_word = Vectorize(function(x){
+  if (is.na(x)) {
+    return(x)
+  }
+  str_split(x, " ")[[1]][1]
+})
+
+can_char_be_factor = function(x, n = 20) {
+  if (is.character(x)) {
+    return(length(unique(x)) < n)
+  }
+  return(FALSE)
+}
+
+full_cleaned_data = full_raw_data %>% 
+  mutate_if(is.character, str_replace_all, pattern = "&rsquo;", replacement = "'") %>% 
+  mutate(religion_raw = religion, religion = get_first_word(religion), 
+         sign_raw = sign, sign = get_first_word(sign), 
+         speaks_en = str_detect(speaks, "english"), multi_ling = str_detect(speaks, ","), 
+         ethnicity_raw = ethnicity, ethnicity = collapse_ethnicity(ethnicity),
+         last_online_raw = last_online, last_online = ymd_hm(last_online), 
+         year_last_online = year(last_online), month_last_online = month(last_online), day_last_online = day(last_online),
+         time_since_online = as.period(max(last_online) - last_online), days_since_online = period_to_seconds(time_since_online) %>%  (function(x) x / 86400)) %>% 
+  mutate_if(can_char_be_factor, factor)
+```
+
+### Descriptive Statistics
+```{r full-desc-stats}
+full_data_descriptives = full_cleaned_data %>% skim_to_list() 
+full_data_descriptives[[1]] %>% kable(caption = "Text Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+full_data_descriptives[[2]] %>% kable(caption = "Categorical Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+full_data_descriptives[[4]] %>% kable(caption = "Dummy Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+full_data_descriptives[[5]] %>% kable(caption = "Continuous Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+full_data_descriptives[[6]] %>% kable(caption = "Date-time Variables") %>% kable_styling(bootstrap_options = c("striped", "condensed", "responsive"))
+```
+
+### Visualizations
+
+#### Continuous Variables
+```{r full-num-viz, warning=FALSE}
+full_cleaned_data %>% select_if(is.numeric) %>% select(-time_since_online) %>% ggpairs(progress = FALSE) + theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+#### Categorical Variables
+```{r full-factors-viz, warning=FALSE}
+is_categorical = function(x) {
+  is.factor(x) | is.logical(x)
+}
+
+full_cleaned_data %>% select_if(is_categorical) %>% mutate_all(factor) %>% pivot_longer(dplyr::everything()) %>% table() %>% as_tibble() %>% ggplot(aes(area = n, fill = value, label = value)) + geom_treemap() + geom_treemap_text(color = "white", place = "centre", grow = TRUE) + facet_wrap(~ name) + theme(legend.position = "none")
+
+full_cleaned_data %>% select_if(is_categorical) %>% mutate_all(factor) %>% mutate_all(collapse_to_other, n_categories = 4) %>% pivot_longer(dplyr::everything()) %>% na.omit() %>% ggplot(aes(x = value)) + geom_bar() + scale_x_discrete(labels = abbreviate) + facet_wrap(~ name, scales = "free_x") + theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
