@@ -11,18 +11,22 @@ output:
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(here)
 library(skimr)
+library(here)
 library(knitr)
 library(kableExtra)
 library(corrplot)
 library(GGally)
 library(treemapify)
 library(lubridate)
+library(ggmap)
 
 knitr::opts_chunk$set(echo = TRUE, fig.height = 8, fig.width = 10, dpi = 300)
 
 source(here::here("Data", "get_data.R"))
+source(here::here("api_keys.R"))
+
+register_google(gmaps_key)
 
 fix_nas = function(data_set, na_strs) {
   library(tidyverse)
@@ -91,7 +95,7 @@ cleaned_data %>% select_if(is.factor) %>% na.omit() %>% mutate_all(collapse_to_o
 ## Full Dataset
 
 ### Data Preparation
-```{r full-data-prep}
+```{r full-data-prep, cache=TRUE, message=FALSE}
 full_raw_data = read_csv(here::here("Data", "full_ok_cupid.csv")) 
 
 get_first_word = Vectorize(function(x){
@@ -108,6 +112,12 @@ can_char_be_factor = function(x, n = 20) {
   return(FALSE)
 }
 
+location_data = full_raw_data %>% select(location) %>% unique() %>% bind_cols(geocode(unlist(.)))
+san_fran_loc = c(-122.4194155, 37.77493)
+all_locations = location_data %>% select(-location) %>% as.matrix()
+location_data$distance = geosphere::distGeo(san_fran_loc, all_locations) * 0.000621371 # calculates distance between SF and all other locations and converts from meters to mils
+location_data$visiting = location_data$distance > 25 # users are designated as "visiting" if the specified location on their profile is a certain distance from SF
+
 full_cleaned_data = full_raw_data %>% 
   mutate_if(is.character, str_replace_all, pattern = "&rsquo;", replacement = "'") %>% 
   mutate(religion_raw = religion, religion = get_first_word(religion), 
@@ -117,7 +127,10 @@ full_cleaned_data = full_raw_data %>%
          last_online_raw = last_online, last_online = ymd_hm(last_online), 
          year_last_online = year(last_online), month_last_online = month(last_online), day_last_online = day(last_online),
          time_since_online = as.period(max(last_online) - last_online), days_since_online = period_to_seconds(time_since_online) %>%  (function(x) x / 86400)) %>% 
-  mutate_if(can_char_be_factor, factor)
+  mutate_if(can_char_be_factor, factor) %>% left_join(location_data)
+
+saveRDS(full_cleaned_data, here::here("Data", "full_ok_cupid_cleaned.rds"))
+write_csv(full_cleaned_data, here::here("Data", "full_ok_cupid_cleaned.csv"))
 ```
 
 ### Descriptive Statistics
