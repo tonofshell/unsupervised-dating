@@ -247,4 +247,9 @@ is_categorical = function(x) {
 full_cleaned_data %>% select_if(is_categorical) %>% select(-ends_with("raw")) %>% mutate_all(factor) %>% pivot_longer(dplyr::everything()) %>% table() %>% as_tibble() %>% ggplot(aes(area = n, fill = value, label = value)) + geom_treemap() + geom_treemap_text(color = "white", place = "centre", grow = TRUE) + facet_wrap(~ name) + theme(legend.position = "none")
 
 full_cleaned_data %>% select_if(is_categorical) %>% select(-ends_with("raw")) %>% mutate_all(factor) %>% mutate_all(collapse_to_other, n_categories = 4) %>% pivot_longer(dplyr::everything()) %>% na.omit() %>% ggplot(aes(x = value)) + geom_bar() + scale_x_discrete(labels = abbreviate) + facet_wrap(~ name, scales = "free_x") + theme(axis.text.x = element_text(angle = 20, hjust = 1))
-```
+
+full_cleaned_data %>% select_if(is_categorical) %>% select(-ends_with("raw")) %>% mutate_all(factor) %>% na.omit() %>% pivot_longer(-sex) %>% ggplot(aes(fill = sex, x = value)) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent)  + scale_x_discrete(labels = abbreviate) + facet_wrap(~ name, scales = "free_x") + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+full_cleaned_data %>% select_if(is_categorical) %>% select(-ends_with("raw")) %>% mutate_all(factor) %>% na.omit() %>% pivot_longer(-orientation) %>% ggplot(aes(fill = orientation, x = value)) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent)  + scale_x_discrete(labels = abbreviate) + facet_wrap(~ name, scales = "free_x") + theme(axis.text.x = element_text(angle = 30, hjust = 1))
+
+full_cleaned_data %>% select_if(is_categorical) %>% select(-ends_with("raw")) %>% mutate_all(factor) %>% mutate(ethnicity = collapse_to_other(ethnicity, 5))  %>% na.omit() %>% pivot_longer(-ethnicity) %>% ggplot(aes(fill = ethnicity, x = value)) + geom_bar(position = "fill") + scale_y_continuous(labels = scales::percent)  + scale_x_discrete(labels = abbreviate) + facet_wrap(~ name, scales = "free_x") + theme(axis.text.x = element_text(angle = 30, hjust = 1))
