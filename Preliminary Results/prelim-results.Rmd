@@ -51,7 +51,7 @@ full_cleaned_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
 
 ### Descriptive Statistics
 
-Overall, this dataset encompasses `r ncol(full_cleaned_data)` variables for `r nrow(full_cleaned_data)` observations. Each observation is a dating profile for a person, gathered from subset of OkCupid users active on 2012/06/30, who had been active within the lst year and had at least one profile photo. Users were located within a 25 mile radius of San Francisco when the data was scraped. `r length(full_cleaned_data$visiting)` were "visiting" and listed a location outside of a 25 mile radius from San Francisco on their profile. Approximately `r round(sum(full_cleaned_data$sex == "m") / nrow(full_cleaned_data) * 100)`% of the profiles identfy as male, `r round(sum(na.omit(full_cleaned_data$ethnicity) == "white") / nrow(full_cleaned_data) * 100)`% as white, `r round(sum(full_cleaned_data$orientation == "straight") / nrow(full_cleaned_data) * 100)`% as straight, and `r round(sum(full_cleaned_data$multi_ling) / nrow(full_cleaned_data) * 100)`% as multilingual. The median age specified on profiles was `r median(full_cleaned_data$age)`.
+Overall, this dataset encompasses `r ncol(full_cleaned_data)` variables for `r nrow(full_cleaned_data)` observations. Each observation is a dating profile for a person, gathered from subset of OkCupid users active on 2012/06/30, who had been active within the lst year and had at least one profile photo. Users were located within a 25 mile radius of San Francisco when the data was scraped. `r length(full_cleaned_data$visiting)` were "visiting" and listed a location outside of a 25 mile radius from San Francisco on their profile. Approximately `r round(sum(full_cleaned_data$sex == "m") / nrow(full_cleaned_data) * 100)`% of the profiles identfy as male, `r round(sum(na.omit(full_cleaned_data$ethnicity) == "white") / nrow(full_cleaned_data) * 100)`% as white, `r round(sum(full_cleaned_data$orientation == "straight") / nrow(full_cleaned_data) * 100)`% as straight, and `r round(sum(na.omit(full_cleaned_data$multi_ling)) / nrow(full_cleaned_data) * 100)`% as multilingual. The median age specified on profiles was `r median(full_cleaned_data$age)`.
 
 ```{r full-desc-stats, echo=FALSE, cache=TRUE}
 full_data_descriptives = full_cleaned_data %>% select(-ends_with("raw")) %>% skim_to_list() 
@@ -101,15 +101,19 @@ We used the Non-Matrix Factorization method in Topic Analysis to build a topic m
 
 For race, we again see similar patterns. There are a few interesting patterns- such as the high use of words to do with ‘cool’ by African American men, and a relative lack thereof in Asian and White men. Black men also trail behind in their references to relocation and the region, and yet use words from the topics on being new. This may imply that they wish to emphasize being new and on the lookout for friends without mentioning where they are from, which might carry the burden of judgment. 
 For height, there are almost no visible differences between the average representation of each topic
+
 ![Topics by Race](race.png)
 
 For education, we observe some differences in a few topics, such as ‘cool’ and ‘travel’ holding higher proportions for those with less and more than high school diplomas respectively. In other areas such as ‘Reach Out’ and ‘New Here’, we observe only a few percentage points’ difference
+
 ![Topics by Education](education.png)
 
 For height, we so no noteworthy differences beyond a few percentage points for ‘likes’ and ‘about me’. 
+
 ![Topics by Height](height.png)
 
 For fitness, similarly, no clear differences emerge.
+
 ![Topics by Physical Fitness](fit.png)
 
 Overall, there is close to little differentiation on any of these four variables of interest.
@@ -118,14 +122,17 @@ Future Extensions- We can check for similar difference on gender, religion, etc
 
 ### Vector Space Model Analysis of Profiles
 We used SpaCy and other libraries to clean up the Self-Introduction essay in the profiles. We used the Doc2Vec technique- where each profile is assigned a single score based on the vector space model- averaging out across all the words in the model. We then collapse the vector space down to 2 dimensions using TSNE. We use elbow plots to check for clustering. Based on the plot, we see largely one elliptical ‘blob’. There does not seem to be a clear discernible pattern
-![TSNE Blob](TSNE_blob.png)
+
+```{r}
+#![TSNE Blob](TSNE_blob.png)
+```
 
 ![Elbow Plot](Elbow_Plot.png)
 
 In the future, we could consider more agglomerative clustering methods for the profile scores.
 
 
-## Unsupervised Clustering
+## Demographic Clustering
 
 The output quality from clustering depends heavily on the data we use. In the raw data, many variables are categorical. So we have to do some feature engineering with intuition from our experience using OkCupid.
 
