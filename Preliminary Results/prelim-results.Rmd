@@ -14,3 +14,150 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Topic Modeling
 
 ## Unsupervised Clustering
+
+The output quality from clustering depends heavily on the data we use. In the raw data, many variables are categorical. So we have to do some feature engineering with intuition from our experience using OkCupid.
+
+1. Body type
+
+The users could choose their body types as `average`, `fit`
+, `athletic`, `thin`, `curvy`, `skinny`, `jacked`, etc. Since `average` and `fit` users are the most common (46% of the sample), we labeled them as 1 and the rest as 0. 
+
+2. diet
+
+We assume that people take diet preferences into consideration when choosing a future mate. Especially for people who are vegetarian, they might get along easier with partners who are vegetarians too. SO we labeled vegetarian users as 1 and the rest as 0. Surprisingly, this subset is almost half of the sample.
+
+3. status
+
+Generally, we would assume all people using online dating are single. However, there are 310 users who are married and 10 unknown. We classified all the `single` users as 1 and the rest as 0. 93% of them are single.
+
+4. drinks
+
+The drinks altitude is also important for choosing a partner as it might predict people's preferences for social events. We labeled `socially` as 1 the rest as 0. Although it is ambiguous of what `socially` means, we assume this is what most people would do (or pretend them to be) as 70% of them fall into this category.
+
+5. drugs
+
+It's highly impossible that people who don't do drugs would date someone likes drugs. So we labeled 1 for `never` drug users and 0 for the rest. 63% of them don't do drugs.
+
+6. education
+
+We define two groups of education level: the ones with/working on advanced degrees, and the ones who don't. Advanced degrees are Ph.D., masters, law school of medical school. 18% of the users are educated beyond the undergraduate level.
+
+7. ethnicity
+
+This is an important dimension when choosing the date. Many previous pieces of research also show that certain male or female races group are most/least popular on the online dating website. For simplicity, we just classified the `white` as 1 and the rest as 0. White users have the highest ratio of 55%, followed by Asian, Hispanic/Latin.
+
+8. height
+
+Height might not be a crucial factor. Here we labeled people as `normalheight` if their heights are in 25~75% percentile of the distribution, which means they are between 66 to 71 inches. Roughly half of the users have normal heights.
+
+9. income
+
+Not surprisingly, 81% of the people didn't specify their income level. So we labeled the 19% users who do as 1.
+
+10. job
+
+There are many job categories in the data. We are interested in two groups: the first one is students, as they certainly have a different dating preference than the other working professionals; the second one is people working in the tech and engineering industry. The two groups account for 8% and 16% of the total users, respectively.
+
+
+11. Offspring
+
+
+We labeled people who don't have kids as 1, which is 86% of the sample.
+
+12. Orientation
+
+
+We labeled people who are straight as 1, which is 86% of the sample.
+
+13.  Pets
+
+We labeled people who have pets as 1, which is 57% of the sample.
+
+
+14. Religion
+
+
+We labeled people who not religious at all as 1, which is 34% of the sample.
+
+
+15. Sex
+
+
+We labeled male users as 1, which is 60% of the sample.
+
+
+16. Smokes
+
+
+We labeled people who don't smoke as 1, which is 73% of the sample.
+
+
+17. Speaks
+
+
+We calculate the number of languages users indicate they know as a new feature.
+
+
+18. Distance
+
+
+We use Google Map API to calculate the physical distance between users' city to San Francisco.
+
+
+19. Days since Online
+
+
+This feature is calculated from the `last_online` variable in the raw data.
+
+
+### Examine new features
+
+
+The cleaned data has 59955 raws and 22 columns (features).
+
+
+The heatmap shows there are no features pairs that are strongly correlated.
+
+
+![Correlation Matrice Heatmap](corrheat.png)
+
+
+### Kmeans
+
+
+We have started clustering with Kmeans. However, we haven't seen an optimal K by using the Elbow method and Silhouette Score. We need to further work on reducing the dimensions.
+
+
+The following scatter plot illustrates the result by using 3 clusters. The y-axis is days since online. The x-axis is age. The color is their labeled clusters. We could see clusters 1 and 2 are on the left side, which represents mainly people younger than 45. Cluster 3 consists mainly of people who are older than 45.
+
+![KMeans Visualization Example](KMeans3-ex.png)
+
+
+
+### Principal Components Analysis
+
+We start to use principal components to reduce the dimensions. We still need further work to decide the optimal number of components.
+
+The following plot shows the first two principal components of models with 3 PC. The color represents being male or not.
+
+
+![PCA Visualization](PCA-male.png)
+
+
+The following heatmap shows the weights loadings of the 3 PCs.
+
+
+![PCA Loadings](PCA.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
