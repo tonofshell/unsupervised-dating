@@ -1,0 +1,16 @@
+---
+title: "Preliminary Results"
+author: "Li Liu, Abhishek Pandit, Adam Shelton"
+date: "11/5/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exploratory Data Analysis
+
+## Topic Modeling
+
+## Unsupervised Clustering
