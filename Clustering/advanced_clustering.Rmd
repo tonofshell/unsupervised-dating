@@ -1,0 +1,64 @@
+---
+title: "Advanced Clustering"
+author: "Adam Shelton"
+date: "11/11/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(here)
+library(cluster)
+library(FactoMineR)
+library(factoextra)
+library(NbClust)
+# library(doParallel)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(60615)
+
+# setup_cl = function(seed = round(Sys.time())) {
+#   require(parallel)
+#   if (exists("cl")) {
+#     print("Stopping existing cluster")
+#     try(parallel::stopCluster(cl))
+#   }
+#   assign("cl", parallel::makeCluster(parallel::detectCores() - 1, outfile = "out.txt"), envir = globalenv())
+#   RNGkind("L'Ecuyer-CMRG")
+#   print(paste("Using", as.numeric(seed), "as parallel RNG seed"))
+#   clusterSetRNGStream(cl, seed)
+# }
+# setup_cl(60615)
+# registerDoParallel(cl)
+```
+
+## Import Data
+```{r data}
+#original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
+
+new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix()
+```
+
+## CLARA
+```{r}
+nb <- NbClust(new_features, distance = "euclidean", min.nc = 2,
+        max.nc = 10, method = "complete", index ="all")
+clara_mod = clara(new_features, 3)
+clara_mod %>% silhouette(full = TRUE)
+
+```
+
+
+## Fuzzy
+```{r}
+fanny()
+```
+
+
+
+## DBSCAN
+```{r}
+
+```
+
