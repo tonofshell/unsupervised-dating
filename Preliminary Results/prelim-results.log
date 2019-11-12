@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.3)  5 NOV 2019 16:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/W32TeX) (preloaded format=pdflatex 2019.9.3)  5 NOV 2019 16:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -471,6 +471,38 @@ Now handling font encoding PU ...
 )
 Package hyperref Info: Option `breaklinks' set `true' on input line 30.
 
+(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
+
+(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color
+.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: pdftex.def on input line 147.
+
+(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdfte
+x.def
+File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
+))
+(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.
+sty
+Package: fancyvrb 2019/01/15
+Style option: `fancyvrb' v3.2a <2019/01/15> (tvz)
+\FV@CodeLineNo=\count113
+\FV@InFile=\read1
+\FV@TabBox=\box29
+\c@FancyVerbLine=\count114
+\FV@StepNumber=\count115
+\FV@OutFile=\write3
+) (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/framed/framed.st
+y
+Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
+\OuterFrameSep=\skip47
+\fb@frw=\dimen124
+\fb@frh=\dimen125
+\FrameRule=\dimen126
+\FrameSep=\dimen127
+)
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.
 sty
 Package: graphicx 2017/06/01 v1.1a Enhanced LaTeX Graphics (DPC,SPQR)
@@ -486,13 +518,9 @@ ics.cfg
 File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 99.
-
-(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-def/pdfte
-x.def
-File: pdftex.def 2018/01/08 v1.0l Graphics/color driver for pdftex
-))
-\Gin@req@height=\dimen124
-\Gin@req@width=\dimen125
+)
+\Gin@req@height=\dimen128
+\Gin@req@width=\dimen129
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/oberdiek/grffile.s
 ty
@@ -505,98 +533,88 @@ Package grffile Info: \Gin@ii of package `graphicx' fixed on input line 494.
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/titling/titling.st
 y
 Package: titling 2009/09/04 v2.1d maketitle typesetting
-\thanksmarkwidth=\skip47
-\thanksmargin=\skip48
-\droptitle=\skip49
+\thanksmarkwidth=\skip48
+\thanksmargin=\skip49
+\droptitle=\skip50
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/booktabs/booktabs.
 sty
 Package: booktabs 2016/04/27 v1.618033 publication quality tables
-\heavyrulewidth=\dimen126
-\lightrulewidth=\dimen127
-\cmidrulewidth=\dimen128
-\belowrulesep=\dimen129
-\belowbottomsep=\dimen130
-\aboverulesep=\dimen131
-\abovetopsep=\dimen132
-\cmidrulesep=\dimen133
-\cmidrulekern=\dimen134
-\defaultaddspace=\dimen135
-\@cmidla=\count113
-\@cmidlb=\count114
-\@aboverulesep=\dimen136
-\@belowrulesep=\dimen137
-\@thisruleclass=\count115
-\@lastruleclass=\count116
-\@thisrulewidth=\dimen138
+\heavyrulewidth=\dimen130
+\lightrulewidth=\dimen131
+\cmidrulewidth=\dimen132
+\belowrulesep=\dimen133
+\belowbottomsep=\dimen134
+\aboverulesep=\dimen135
+\abovetopsep=\dimen136
+\cmidrulesep=\dimen137
+\cmidrulekern=\dimen138
+\defaultaddspace=\dimen139
+\@cmidla=\count116
+\@cmidlb=\count117
+\@aboverulesep=\dimen140
+\@belowrulesep=\dimen141
+\@thisruleclass=\count118
+\@lastruleclass=\count119
+\@thisrulewidth=\dimen142
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/longtable.st
 y
 Package: longtable 2014/10/28 v4.11 Multi-page Table package (DPC)+ FMi change
-\LTleft=\skip50
-\LTright=\skip51
-\LTpre=\skip52
-\LTpost=\skip53
-\LTchunksize=\count117
-\LTcapwidth=\dimen139
-\LT@head=\box29
-\LT@firsthead=\box30
-\LT@foot=\box31
-\LT@lastfoot=\box32
-\LT@cols=\count118
-\LT@rows=\count119
-\c@LT@tables=\count120
-\c@LT@chunks=\count121
+\LTleft=\skip51
+\LTright=\skip52
+\LTpre=\skip53
+\LTpost=\skip54
+\LTchunksize=\count120
+\LTcapwidth=\dimen143
+\LT@head=\box30
+\LT@firsthead=\box31
+\LT@foot=\box32
+\LT@lastfoot=\box33
+\LT@cols=\count121
+\LT@rows=\count122
+\c@LT@tables=\count123
+\c@LT@chunks=\count124
 \LT@p@ftn=\toks24
 ) (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/tools/array.sty
 Package: array 2018/12/30 v2.4k Tabular extension package (FMi)
-\col@sep=\dimen140
-\ar@mcellbox=\box33
-\extrarowheight=\dimen141
+\col@sep=\dimen144
+\ar@mcellbox=\box34
+\extrarowheight=\dimen145
 \NC@list=\toks25
-\extratabsurround=\skip54
-\backup@length=\skip55
-\ar@cellbox=\box34
+\extratabsurround=\skip55
+\backup@length=\skip56
+\ar@cellbox=\box35
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/multirow/multirow.
 sty
 Package: multirow 2019/05/31 v2.5 Span multiple rows of a table
-\multirow@colwidth=\skip56
-\multirow@cntb=\count122
-\multirow@dima=\skip57
-\bigstrutjot=\dimen142
+\multirow@colwidth=\skip57
+\multirow@cntb=\count125
+\multirow@dima=\skip58
+\bigstrutjot=\dimen146
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/wrapfig/wrapfig.st
 y
-\wrapoverhang=\dimen143
-\WF@size=\dimen144
-\c@WF@wrappedlines=\count123
-\WF@box=\box35
+\wrapoverhang=\dimen147
+\WF@size=\dimen148
+\c@WF@wrappedlines=\count126
+\WF@box=\box36
 \WF@everypar=\toks26
 Package: wrapfig 2003/01/31  v 3.6
 ) (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count124
+\c@float@type=\count127
 \float@exts=\toks27
-\float@box=\box36
+\float@box=\box37
 \@float@everytoks=\toks28
-\@floatcapt=\box37
+\@floatcapt=\box38
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/colortbl/colortbl.
 sty
 Package: colortbl 2018/12/12 v1.0d Color table columns (DPC)
-
-(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics/color.sty
-Package: color 2016/07/10 v1.1e Standard LaTeX Color (DPC)
-
-(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color
-.cfg
-File: color.cfg 2016/01/02 v1.6 sample color configuration
-)
-Package color Info: Driver file: pdftex.def on input line 147.
-)
 \everycr=\toks29
-\minrowclearance=\skip58
+\minrowclearance=\skip59
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/oberdiek/pdflscape
 .sty
@@ -613,38 +631,38 @@ Package: tabu 2019/01/11 v2.9 - flexible LaTeX tabulars (FC+tabu-fixed)
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/varwidth/varwidth.
 sty
 Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
-\@vwid@box=\box38
-\sift@deathcycles=\count125
-\@vwid@loff=\dimen145
-\@vwid@roff=\dimen146
+\@vwid@box=\box39
+\sift@deathcycles=\count128
+\@vwid@loff=\dimen149
+\@vwid@roff=\dimen150
 )
-\c@taburow=\count126
-\tabu@nbcols=\count127
-\tabu@cnt=\count128
-\tabu@Xcol=\count129
-\tabu@alloc=\count130
-\tabu@nested=\count131
-\tabu@target=\dimen147
-\tabu@spreadtarget=\dimen148
-\tabu@naturalX=\dimen149
-\tabucolX=\dimen150
-\tabu@Xsum=\dimen151
-\extrarowdepth=\dimen152
-\abovetabulinesep=\dimen153
-\belowtabulinesep=\dimen154
-\tabustrutrule=\dimen155
+\c@taburow=\count129
+\tabu@nbcols=\count130
+\tabu@cnt=\count131
+\tabu@Xcol=\count132
+\tabu@alloc=\count133
+\tabu@nested=\count134
+\tabu@target=\dimen151
+\tabu@spreadtarget=\dimen152
+\tabu@naturalX=\dimen153
+\tabucolX=\dimen154
+\tabu@Xsum=\dimen155
+\extrarowdepth=\dimen156
+\abovetabulinesep=\dimen157
+\belowtabulinesep=\dimen158
+\tabustrutrule=\dimen159
 \tabu@thebody=\toks30
 \tabu@footnotes=\toks31
-\tabu@box=\box39
-\tabu@arstrutbox=\box40
-\tabu@hleads=\box41
-\tabu@vleads=\box42
-\tabu@cellskip=\skip59
+\tabu@box=\box40
+\tabu@arstrutbox=\box41
+\tabu@hleads=\box42
+\tabu@vleads=\box43
+\tabu@cellskip=\skip60
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttable/thr
 eeparttable.sty
 Package: threeparttable 2003/06/13  v 3.0
-\@tempboxb=\box43
+\@tempboxb=\box44
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/threeparttablex/th
 reeparttablex.sty
@@ -658,24 +676,24 @@ Package: environ 2014/05/04 v0.3 A new way to define environments
 ces.sty
 Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 ))
-\TPTL@width=\skip60
+\TPTL@width=\skip61
 ) (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/generic/ulem/ulem.sty
-\UL@box=\box44
-\UL@hyphenbox=\box45
-\UL@skip=\skip61
+\UL@box=\box45
+\UL@hyphenbox=\box46
+\UL@skip=\skip62
 \UL@hook=\toks32
-\UL@height=\dimen156
-\UL@pe=\count132
-\UL@pixel=\dimen157
-\ULC@box=\box46
+\UL@height=\dimen160
+\UL@pe=\count135
+\UL@pixel=\dimen161
+\ULC@box=\box47
 Package: ulem 2012/05/18
-\ULdepth=\dimen158
+\ULdepth=\dimen162
 )
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/makecell/makecell.
 sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
-\rotheadsize=\dimen159
-\c@nlinenum=\count133
+\rotheadsize=\dimen163
+\c@nlinenum=\count136
 \TeXr@lab=\toks33
 ) (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.st
 y
@@ -712,30 +730,30 @@ LaTeX Warning: Label `tab:full-desc-stats' multiply defined.
 )
 \openout1 = `prelim-results.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 102.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 102.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 142.
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 142.
 
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 102.
-LaTeX Font Info:    ... okay on input line 102.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 102.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 142.
+LaTeX Font Info:    ... okay on input line 142.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 142.
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -773,8 +791,8 @@ File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\AtBeginShipoutBox=\box47
-Package hyperref Info: Link coloring OFF on input line 102.
+\AtBeginShipoutBox=\box48
+Package hyperref Info: Link coloring OFF on input line 142.
 
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/hyperref/nameref.s
 ty
@@ -784,14 +802,14 @@ Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 estring.sty
 Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
-\c@section@level=\count134
+\c@section@level=\count137
 )
-LaTeX Info: Redefining \ref on input line 102.
-LaTeX Info: Redefining \pageref on input line 102.
-LaTeX Info: Redefining \nameref on input line 102.
+LaTeX Info: Redefining \ref on input line 142.
+LaTeX Info: Redefining \pageref on input line 142.
+LaTeX Info: Redefining \nameref on input line 142.
 (./prelim-results.out) (./prelim-results.out)
-\@outlinefile=\write3
-\openout3 = `prelim-results.out'.
+\@outlinefile=\write4
+\openout4 = `prelim-results.out'.
 
 
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/oberdiek/epstopdf-
@@ -814,59 +832,59 @@ df-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 125.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 165.
 
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 125.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 165.
 
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 125
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 165
 .
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 125
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 165
 .
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 125.
+(Font)              <10> on input line 165.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 125.
+(Font)              <7> on input line 165.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 125.
-LaTeX Font Info:    Try loading font information for U+msa on input line 125.
+(Font)              <5> on input line 165.
+LaTeX Font Info:    Try loading font information for U+msa on input line 165.
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 125.
+LaTeX Font Info:    Try loading font information for U+msb on input line 165.
 (c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (16.18808pt too wide) in paragraph at lines 166--207
+Overfull \hbox (16.18808pt too wide) in paragraph at lines 206--247
  [][] 
  []
 
-<prelim-results_files/figure-latex/full-num-viz-1.png, id=32, 578.16pt x 433.62
+<prelim-results_files/figure-latex/full-num-viz-1.png, id=44, 578.16pt x 433.62
 pt>
 File: prelim-results_files/figure-latex/full-num-viz-1.png Graphic file (type p
 ng)
 <use prelim-results_files/figure-latex/full-num-viz-1.png>
 Package pdftex.def Info: prelim-results_files/figure-latex/full-num-viz-1.png  
-used on input line 274.
+used on input line 314.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
-<prelim-results_files/figure-latex/full-factors-viz-1.png, id=33, 578.16pt x 43
+<prelim-results_files/figure-latex/full-factors-viz-1.png, id=45, 578.16pt x 43
 3.62pt>
 File: prelim-results_files/figure-latex/full-factors-viz-1.png Graphic file (ty
 pe png)
 <use prelim-results_files/figure-latex/full-factors-viz-1.png>
 Package pdftex.def Info: prelim-results_files/figure-latex/full-factors-viz-1.p
-ng  used on input line 279.
+ng  used on input line 319.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
 [1
 
@@ -877,158 +895,214 @@ been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.281 \includegraphics
+l.321 \includegraphics
                       {prelim-results_files/figure-latex/factors-sex-1.png}pdfT
 eX warning (ext4): destination with the same identifier (name{table.2}) has bee
 n already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.281 \includegraphics
+l.321 \includegraphics
                       {prelim-results_files/figure-latex/factors-sex-1.png}pdfT
 eX warning (ext4): destination with the same identifier (name{table.3}) has bee
 n already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.281 \includegraphics
+l.321 \includegraphics
                       {prelim-results_files/figure-latex/factors-sex-1.png}]
-<prelim-results_files/figure-latex/factors-sex-1.png, id=57, 578.16pt x 433.62p
+<prelim-results_files/figure-latex/factors-sex-1.png, id=69, 578.16pt x 433.62p
 t>
 File: prelim-results_files/figure-latex/factors-sex-1.png Graphic file (type pn
 g)
 <use prelim-results_files/figure-latex/factors-sex-1.png>
 Package pdftex.def Info: prelim-results_files/figure-latex/factors-sex-1.png  u
-sed on input line 281.
+sed on input line 321.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
 [3pdfTeX warning (ext4): destination with the same identifier (name{table.4}) h
 as been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.283 \includegraphics
+l.323 \includegraphics
                       {prelim-results_files/figure-latex/factors-orient-1.png}p
 dfTeX warning (ext4): destination with the same identifier (name{table.5}) has 
 been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.283 \includegraphics
+l.323 \includegraphics
                       {prelim-results_files/figure-latex/factors-orient-1.png} 
 <./prelim-results_files/figure-latex/full-factors-viz-1.png (PNG copy)>]
-<prelim-results_files/figure-latex/factors-orient-1.png, id=65, 578.16pt x 433.
+<prelim-results_files/figure-latex/factors-orient-1.png, id=77, 578.16pt x 433.
 62pt>
 File: prelim-results_files/figure-latex/factors-orient-1.png Graphic file (type
  png)
 <use prelim-results_files/figure-latex/factors-orient-1.png>
 Package pdftex.def Info: prelim-results_files/figure-latex/factors-orient-1.png
-  used on input line 283.
+  used on input line 323.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
 [4 <./prelim-results_files/figure-latex/factors-sex-1.png (PNG copy)>]
-<prelim-results_files/figure-latex/factors-ethnic-1.png, id=70, 578.16pt x 433.
+<prelim-results_files/figure-latex/factors-ethnic-1.png, id=82, 578.16pt x 433.
 62pt>
 File: prelim-results_files/figure-latex/factors-ethnic-1.png Graphic file (type
  png)
 <use prelim-results_files/figure-latex/factors-ethnic-1.png>
 Package pdftex.def Info: prelim-results_files/figure-latex/factors-ethnic-1.png
-  used on input line 285.
+  used on input line 325.
 (pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
 [5 <./prelim-results_files/figure-latex/factors-orient-1.png (PNG copy)>]
-<race.png, id=75, 1440.38126pt x 980.66376pt>
+<race.png, id=87, 1440.38126pt x 980.66376pt>
 File: race.png Graphic file (type png)
 <use race.png>
-Package pdftex.def Info: race.png  used on input line 314.
+Package pdftex.def Info: race.png  used on input line 358.
 (pdftex.def)             Requested size: 469.74477pt x 319.81926pt.
-[6 <./prelim-results_files/figure-latex/factors-ethnic-1.png (PNG copy)>]
-<education.png, id=83, 1471.4975pt x 980.66376pt>
+<education.png, id=89, 1471.4975pt x 980.66376pt>
 File: education.png Graphic file (type png)
 <use education.png>
-Package pdftex.def Info: education.png  used on input line 320.
+Package pdftex.def Info: education.png  used on input line 370.
 (pdftex.def)             Requested size: 469.74371pt x 313.05566pt.
-
-Underfull \hbox (badness 1454) in paragraph at lines 316--321
-[]\T1/lmr/m/n/10 For ed-u-ca-tion, we ob-serve some dif-fer-ences in a few top-
-ics, such as `cool' and `travel' hold-ing
- []
-
-
-Underfull \hbox (badness 1092) in paragraph at lines 316--321
-\T1/lmr/m/n/10 ar-eas such as `Reach Out' and `New Here', we ob-serve only a fe
-w per-cent-age points' dif-fer-ence
- []
-
-[7 <./race.png>]
 <height.png, id=90, 1446.40375pt x 980.66376pt>
 File: height.png Graphic file (type png)
 <use height.png>
-Package pdftex.def Info: height.png  used on input line 323.
+Package pdftex.def Info: height.png  used on input line 379.
 (pdftex.def)             Requested size: 469.7446pt x 318.48749pt.
-[8 <./education.png>]
-<fit.png, id=96, 1442.38875pt x 980.66376pt>
-File: fit.png Graphic file (type png)
-<use fit.png>
-Package pdftex.def Info: fit.png  used on input line 326.
-(pdftex.def)             Requested size: 469.7392pt x 319.37035pt.
-
-Overfull \hbox (211.9469pt too wide) in paragraph at lines 325--327
-[]\T1/lmr/m/n/10 For fit-ness, sim-i-larly, no clear dif-fer-ences emerge. [] 
- []
-
-[9 <./height.png> <./fit.png>]
-<TSNE_blob.png, id=103, 447.6725pt x 303.1325pt>
-File: TSNE_blob.png Graphic file (type png)
-<use TSNE_blob.png>
-Package pdftex.def Info: TSNE_blob.png  used on input line 345.
-(pdftex.def)             Requested size: 447.67822pt x 303.13638pt.
-
-Underfull \hbox (badness 1490) in paragraph at lines 338--346
-\T1/lmr/m/n/10 used the Doc2Vec technique- where each pro-file is as-signed a s
-in-gle score based on the vec-tor
- []
-
-<Elbow_Plot.png, id=104, 422.57875pt x 281.05pt>
-File: Elbow_Plot.png Graphic file (type png)
-<use Elbow_Plot.png>
-Package pdftex.def Info: Elbow_Plot.png  used on input line 349.
-(pdftex.def)             Requested size: 422.5906pt x 281.05788pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 360.
-[10 <./TSNE_blob.png>] [11pdfTeX warning (ext4): destination with the same iden
-tifier (name{figure.1}) has been already used, duplicate ignored
+[6 <./prelim-results_files/figure-latex/factors-ethnic-1.png (PNG copy)>] [7pdf
+TeX warning (ext4): destination with the same identifier (name{figure.1}) has b
+een already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.360 \end{document}
-                     <./Elbow_Plot.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 360.
+l.381 \end{figure}
+                   <./race.png>] [8pdfTeX warning (ext4): destination with the 
+same identifier (name{figure.2}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.381 \end{figure}
+                   <./education.png>]
+<fit.png, id=110, 1442.38875pt x 980.66376pt>
+File: fit.png Graphic file (type png)
+<use fit.png>
+Package pdftex.def Info: fit.png  used on input line 387.
+(pdftex.def)             Requested size: 469.7392pt x 319.37035pt.
+
+Package xcolor Warning: Incompatible color definition on input line 409.
+
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 410.
+
+(c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+
+Package xcolor Warning: Incompatible color definition on input line 413.
+
+
+Package xcolor Warning: Incompatible color definition on input line 413.
+
+<Elbow_Plot.png, id=111, 422.57875pt x 281.05pt>
+File: Elbow_Plot.png Graphic file (type png)
+<use Elbow_Plot.png>
+Package pdftex.def Info: Elbow_Plot.png  used on input line 417.
+(pdftex.def)             Requested size: 422.5906pt x 281.05788pt.
+[9pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) 
+has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.435   B
+         ody type <./height.png>] [10pdfTeX warning (ext4): destination with th
+e same identifier (name{figure.4}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.435   B
+         ody type <./fit.png>] [11pdfTeX warning (ext4): destination with the s
+ame identifier (name{figure.5}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.491 \end{enumerate}
+                      <./Elbow_Plot.png>] [12]
+<corrheat.png, id=153, 433.62pt x 289.08pt>
+File: corrheat.png Graphic file (type png)
+<use corrheat.png>
+Package pdftex.def Info: corrheat.png  used on input line 666.
+(pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
+<KMeans3-ex.png, id=154, 433.62pt x 289.08pt>
+File: KMeans3-ex.png Graphic file (type png)
+<use KMeans3-ex.png>
+Package pdftex.def Info: KMeans3-ex.png  used on input line 685.
+(pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
+<PCA-male.png, id=155, 578.16pt x 433.62pt>
+File: PCA-male.png Graphic file (type png)
+<use PCA-male.png>
+Package pdftex.def Info: PCA-male.png  used on input line 701.
+(pdftex.def)             Requested size: 469.75385pt x 352.31538pt.
+<PCA.png, id=156, 1011.78pt x 433.62pt>
+File: PCA.png Graphic file (type png)
+<use PCA.png>
+Package pdftex.def Info: PCA.png  used on input line 709.
+(pdftex.def)             Requested size: 469.76266pt x 201.32686pt.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 714.
+[13] [14pdfTeX warning (ext4): destination with the same identifier (name{figur
+e.6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.714 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.7}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.714 \end{document}
+                     <./corrheat.png> <./KMeans3-ex.png>] [15pdfTeX warning (ex
+t4): destination with the same identifier (name{figure.8}) has been already use
+d, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.714 \end{document}
+                    pdfTeX warning (ext4): destination with the same identifier
+ (name{figure.9}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.714 \end{document}
+                     <./pca-male.png> <./PCA.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 714.
 (./prelim-results.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 360.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 360.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 714.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 714.
 Package rerunfilecheck Info: File `prelim-results.out' has not changed.
-(rerunfilecheck)             Checksum: F0F01EB639C3A8CA27EB0A924E7423F1;1141.
+(rerunfilecheck)             Checksum: 38F8225E1573FB9237D4CA59F001F170;1589.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 360.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 714.
  ) 
 Here is how much of TeX's memory you used:
- 12115 strings out of 494553
- 173289 string characters out of 6175972
- 267264 words of memory out of 5000000
- 15560 multiletter control sequences out of 15000+600000
- 36023 words of font info for 38 fonts, out of 8000000 for 9000
+ 12661 strings out of 494553
+ 181443 string characters out of 6175972
+ 277271 words of memory out of 5000000
+ 16056 multiletter control sequences out of 15000+600000
+ 36661 words of font info for 40 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 28i,9n,35p,314b,344s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 28i,9n,35p,314b,409s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ec.e
 nc}<c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmb
 x10.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/l
 m/lmbx12.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/pub
 lic/lm/lmr10.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1
 /public/lm/lmr17.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fonts/t
-ype1/public/lm/lmri12.pfb>
-Output written on prelim-results.pdf (11 pages, 1799129 bytes).
+ype1/public/lm/lmri12.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-dist/fo
+nts/type1/public/lm/lmtt10.pfb><c:/Users/tonof/AppData/Roaming/TinyTeX/texmf-di
+st/fonts/type1/public/lm/lmtti10.pfb>
+Output written on prelim-results.pdf (15 pages, 2081254 bytes).
 PDF statistics:
- 147 PDF objects out of 1000 (max. 8388607)
- 110 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
- 112 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 230 PDF objects out of 1000 (max. 8388607)
+ 181 compressed objects within 2 object streams
+ 73 named destinations out of 1000 (max. 500000)
+ 151 words of extra memory for PDF output out of 10000 (max. 10000000)
 
