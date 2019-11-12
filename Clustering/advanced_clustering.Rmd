@@ -12,9 +12,11 @@ library(cluster)
 library(FactoMineR)
 library(factoextra)
 library(NbClust)
+library(dbscan)
+library(cowplot)
 # library(doParallel)
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, fig.height = 10, fig.width = 12, dpi = 400)
 
 set.seed(60615)
 
@@ -37,28 +39,38 @@ set.seed(60615)
 ```{r data}
 #original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
 
-new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix()
+new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix() %>% scale()
 ```
 
 ## CLARA
 ```{r}
-nb <- NbClust(new_features, distance = "euclidean", min.nc = 2,
-        max.nc = 10, method = "complete", index ="all")
-clara_mod = clara(new_features, 3)
-clara_mod %>% silhouette(full = TRUE)
+#nb <- NbClust(new_features, distance = "euclidean", min.nc = 2, max.nc = 10, method = "complete", index ="all")
+
+build_clara = function(x) {
+  clara(new_features, x)
+}
+
+clara_mods = lapply(1:15, build_clara)
+
+clara_viz = lapply(clara_mods, fviz_cluster)
+plot_grid(plotlist = clara_viz)
 
 ```
 
 
 ## Fuzzy
-```{r}
-fanny()
+```{r eval=FALSE, include=FALSE}
+test = fanny(new_features, 3)
 ```
 
 
 
 ## DBSCAN
 ```{r}
+kNNdistplot(new_features, k = ncol(new_features) - 1)
+abline(h=.5, col = "red", lty=2)
+test = dbscan(new_features, 0.5)
 
+fviz_cluster(test, new_features, labelsize = 0)
 ```
 
