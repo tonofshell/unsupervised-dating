@@ -14,6 +14,10 @@ library(factoextra)
 library(NbClust)
 library(dbscan)
 library(cowplot)
+library(skimr)
+library(ggcorrplot)
+library(missMDA)
+library(cluster)
 # library(doParallel)
 
 knitr::opts_chunk$set(echo = TRUE, fig.height = 10, fig.width = 12, dpi = 400)
@@ -37,10 +41,15 @@ set.seed(60615)
 
 ## Import Data
 ```{r data}
-#original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
+original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
 
 new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix() %>% scale()
+
+cluster_data = original_data %>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) %>% .[sample(1:nrow(.), 500), ]
 ```
+<!--
+# Take 1
+
 ## PCA
 ```{r}
 PCA(new_features, graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
@@ -69,14 +78,6 @@ ggsave2(here("Clustering", "clara_three.png"), height = 7, width = 11)
 
 ```
 
-
-## Fuzzy
-```{r eval=FALSE, include=FALSE}
-test = fanny(new_features, 3)
-```
-
-
-
 ## DBSCAN
 ```{r, warning=FALSE, message=FALSE}
 kNNdistplot(new_features, k = ncol(new_features) - 1)
@@ -84,5 +85,47 @@ abline(h= 0.5, col = "red", lty=2)
 test = dbscan(new_features, 0.5)
 
 fviz_cluster(test, new_features, labelsize = 0)
+```
+
+# Take 2
+-->
+## Descriptive Statistics
+```{r}
+skim_list = cluster_data %>% as_tibble() %>% skim_to_list()
+
+skim_list$numeric %>% kable()
+skim_list$factor %>% kable()
+skim_list$logical %>% kable()
+
+cluster_data %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
+
+clusterability = cluster_data %>% mutate_all(as.numeric) %>% get_clust_tendency(n = 50)
+clusterability$hopkins_stat
+clusterability$plot
+```
+
+
+## PCA
+```{r}
+cluster_data %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
+ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
+```
+
+## PAM
+```{r}
+gower_data = original_data %>% mutate_all(factor) %>% daisy(metric = "gower")
+
+gower_data %>% fviz_dist()
+
+sil_width <- c(NA)
+for(i in 2:15){  
+  pam_fit <- pam(gower_data, diss = TRUE, k = i)  
+  sil_width[i] <- pam_fit$silinfo$avg.width  
+}
+
+plot(1:8, sil_width,
+     xlab = "Number of clusters",
+     ylab = "Silhouette Width")
+lines(1:8, sil_width)
 ```
 
