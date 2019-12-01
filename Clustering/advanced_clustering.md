@@ -155,7 +155,7 @@ ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ## Agglomerative Nesting
 
 ``` r
-sampled_data = imputed_data %>% as_tibble() %>% sample_n(1000) 
+sampled_data = imputed_data %>% as_tibble() %>% sample_n(2000) 
 agnes_data = sampled_data %>% mutate_all(as.numeric) %>% mutate_all(scale) 
 agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
 ```
@@ -184,14 +184,12 @@ nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.
     ##  
     ## ******************************************************************* 
     ## * Among all indices:                                                
-    ## * 2 proposed 2 as the best number of clusters 
+    ## * 3 proposed 2 as the best number of clusters 
     ## * 11 proposed 3 as the best number of clusters 
-    ## * 1 proposed 4 as the best number of clusters 
-    ## * 1 proposed 5 as the best number of clusters 
-    ## * 2 proposed 6 as the best number of clusters 
-    ## * 1 proposed 7 as the best number of clusters 
+    ## * 3 proposed 4 as the best number of clusters 
+    ## * 2 proposed 5 as the best number of clusters 
+    ## * 1 proposed 6 as the best number of clusters 
     ## * 2 proposed 8 as the best number of clusters 
-    ## * 2 proposed 9 as the best number of clusters 
     ## * 1 proposed 10 as the best number of clusters 
     ## 
     ##                    ***** Conclusion *****                            
@@ -209,14 +207,12 @@ fviz_nbclust(nb_results)
     ## ===================
     ## * 2 proposed  0 as the best number of clusters
     ## * 1 proposed  1 as the best number of clusters
-    ## * 2 proposed  2 as the best number of clusters
+    ## * 3 proposed  2 as the best number of clusters
     ## * 11 proposed  3 as the best number of clusters
-    ## * 1 proposed  4 as the best number of clusters
-    ## * 1 proposed  5 as the best number of clusters
-    ## * 2 proposed  6 as the best number of clusters
-    ## * 1 proposed  7 as the best number of clusters
+    ## * 3 proposed  4 as the best number of clusters
+    ## * 2 proposed  5 as the best number of clusters
+    ## * 1 proposed  6 as the best number of clusters
     ## * 2 proposed  8 as the best number of clusters
-    ## * 2 proposed  9 as the best number of clusters
     ## * 1 proposed  10 as the best number of clusters
     ## 
     ## Conclusion
@@ -234,7 +230,7 @@ fviz_dend(agnes_mod)
 
 ``` r
 sampled_data$cluster = agnes_mod$cluster
-fviz_cluster(agnes_mod, data = agnes_diss)
+fviz_cluster(agnes_mod, data = agnes_diss, labelsize = 0)
 ```
 
 ![](advanced_clustering_files/figure-gfm/agg-nest-5.png)<!-- -->
