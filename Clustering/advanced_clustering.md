@@ -128,7 +128,7 @@ clusterability = imputed_data %>% mutate_all(as.numeric) %>% sample_n(5000) %>% 
 clusterability$hopkins_stat
 ```
 
-    ## [1] 0.7987394
+    ## [1] 0.2012606
 
 ``` r
 clusterability$plot
@@ -155,8 +155,16 @@ ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ## Agglomerative Nesting
 
 ``` r
-agnes_data = imputed_data %>% as_tibble() %>% sample_n(1000) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
-nb_results = NbClust(agnes_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "ward.D2")
+sampled_data = imputed_data %>% as_tibble() %>% sample_n(1000) 
+agnes_data = sampled_data %>% mutate_all(as.numeric) %>% mutate_all(scale) 
+agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
+```
+
+    ## Warning in daisy(., metric = "gower"): binary variable(s) 11, 16 treated as
+    ## interval scaled
+
+``` r
+nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.nc = 2, max.nc = 10, method = "ward.D2")
 ```
 
 ![](advanced_clustering_files/figure-gfm/agg-nest-1.png)<!-- -->
@@ -176,13 +184,15 @@ nb_results = NbClust(agnes_data, distance = "euclidean", min.nc = 2, max.nc = 10
     ##  
     ## ******************************************************************* 
     ## * Among all indices:                                                
-    ## * 4 proposed 2 as the best number of clusters 
-    ## * 7 proposed 3 as the best number of clusters 
-    ## * 4 proposed 4 as the best number of clusters 
-    ## * 1 proposed 6 as the best number of clusters 
-    ## * 2 proposed 7 as the best number of clusters 
-    ## * 1 proposed 8 as the best number of clusters 
-    ## * 4 proposed 10 as the best number of clusters 
+    ## * 2 proposed 2 as the best number of clusters 
+    ## * 11 proposed 3 as the best number of clusters 
+    ## * 1 proposed 4 as the best number of clusters 
+    ## * 1 proposed 5 as the best number of clusters 
+    ## * 2 proposed 6 as the best number of clusters 
+    ## * 1 proposed 7 as the best number of clusters 
+    ## * 2 proposed 8 as the best number of clusters 
+    ## * 2 proposed 9 as the best number of clusters 
+    ## * 1 proposed 10 as the best number of clusters 
     ## 
     ##                    ***** Conclusion *****                            
     ##  
@@ -199,13 +209,15 @@ fviz_nbclust(nb_results)
     ## ===================
     ## * 2 proposed  0 as the best number of clusters
     ## * 1 proposed  1 as the best number of clusters
-    ## * 4 proposed  2 as the best number of clusters
-    ## * 7 proposed  3 as the best number of clusters
-    ## * 4 proposed  4 as the best number of clusters
-    ## * 1 proposed  6 as the best number of clusters
-    ## * 2 proposed  7 as the best number of clusters
-    ## * 1 proposed  8 as the best number of clusters
-    ## * 4 proposed  10 as the best number of clusters
+    ## * 2 proposed  2 as the best number of clusters
+    ## * 11 proposed  3 as the best number of clusters
+    ## * 1 proposed  4 as the best number of clusters
+    ## * 1 proposed  5 as the best number of clusters
+    ## * 2 proposed  6 as the best number of clusters
+    ## * 1 proposed  7 as the best number of clusters
+    ## * 2 proposed  8 as the best number of clusters
+    ## * 2 proposed  9 as the best number of clusters
+    ## * 1 proposed  10 as the best number of clusters
     ## 
     ## Conclusion
     ## =========================
@@ -214,61 +226,20 @@ fviz_nbclust(nb_results)
 ![](advanced_clustering_files/figure-gfm/agg-nest-3.png)<!-- -->
 
 ``` r
-agnes_mod_two = hcut(cluster_data, k = 2, hc_func = "agnes")
+agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 3, hc_func = "agnes")
+fviz_dend(agnes_mod)
 ```
 
-    ## Warning in stats::dist(x, method = method, ...): NAs introduced by coercion
-
-    ## Error: cannot allocate vector of size 6.7 Gb
+![](advanced_clustering_files/figure-gfm/agg-nest-4.png)<!-- -->
 
 ``` r
-fviz_dend(agnes_mod_two)
+sampled_data$cluster = agnes_mod$cluster
+fviz_cluster(agnes_mod, data = agnes_diss)
 ```
 
-    ## Error in fviz_dend(agnes_mod_two): object 'agnes_mod_two' not found
+![](advanced_clustering_files/figure-gfm/agg-nest-5.png)<!-- -->
 
 ``` r
-agnes_mod_four = hcut(cluster_data, k = 4, hc_func = "agnes")
+saveRDS(sampled_data, here("Data", "Results", "agnes_results.rds"))
+write_csv(sampled_data, here("Data", "Results", "agnes_results.csv"))
 ```
-
-    ## Warning in stats::dist(x, method = method, ...): NAs introduced by coercion
-
-    ## Error: cannot allocate vector of size 6.7 Gb
-
-``` r
-fviz_dend(agnes_mod_four)
-```
-
-    ## Error in fviz_dend(agnes_mod_four): object 'agnes_mod_four' not found
-
-``` r
-agnes_mod_ten = hcut(cluster_data, k = 10, hc_func = "agnes")
-```
-
-    ## Warning in stats::dist(x, method = method, ...): NAs introduced by coercion
-
-    ## Error: cannot allocate vector of size 6.7 Gb
-
-``` r
-fviz_dend(agnes_mod_10)
-```
-
-    ## Error in fviz_dend(agnes_mod_10): object 'agnes_mod_10' not found
-
-``` r
-fviz_cluster(agnes_mod_two)
-```
-
-    ## Error in fviz_cluster(agnes_mod_two): object 'agnes_mod_two' not found
-
-``` r
-fviz_cluster(agnes_mod_four)
-```
-
-    ## Error in fviz_cluster(agnes_mod_four): object 'agnes_mod_four' not found
-
-``` r
-fviz_cluster(agnes_mod_ten)
-```
-
-    ## Error in fviz_cluster(agnes_mod_ten): object 'agnes_mod_ten' not found

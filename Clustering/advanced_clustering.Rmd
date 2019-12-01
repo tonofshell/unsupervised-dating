@@ -23,7 +23,7 @@ library(missForest)
 library(tictoc)
 library(doParallel)
 
-knitr::opts_chunk$set(echo = TRUE, fig.height = 10, fig.width = 12, dpi = 400)
+knitr::opts_chunk$set(echo = TRUE, fig.height = 8, fig.width = 10, dpi = 400)
 
 set.seed(60615)
 
@@ -289,23 +289,20 @@ lines(1:8, sil_width)
 ```
 -->
 ## Agglomerative Nesting
-```{r agg-nest, error=TRUE, cache=TRUE}
-agnes_data = imputed_data %>% as_tibble() %>% sample_n(1000) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
-nb_results = NbClust(agnes_data, distance = "euclidean", min.nc = 2, max.nc = 10, method = "ward.D2")
+```{r agg-nest, error=TRUE}
+sampled_data = imputed_data %>% as_tibble() %>% sample_n(1000) 
+agnes_data = sampled_data %>% mutate_all(as.numeric) %>% mutate_all(scale) 
+agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
+nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.nc = 2, max.nc = 10, method = "ward.D2")
 
 fviz_nbclust(nb_results)
 
-agnes_mod_two = hcut(cluster_data, k = 2, hc_func = "agnes")
-fviz_dend(agnes_mod_two)
+agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 3, hc_func = "agnes")
+fviz_dend(agnes_mod)
+sampled_data$cluster = agnes_mod$cluster
+fviz_cluster(agnes_mod, data = agnes_diss)
 
-agnes_mod_four = hcut(cluster_data, k = 4, hc_func = "agnes")
-fviz_dend(agnes_mod_four)
-
-agnes_mod_ten = hcut(cluster_data, k = 10, hc_func = "agnes")
-fviz_dend(agnes_mod_10)
-
-fviz_cluster(agnes_mod_two)
-fviz_cluster(agnes_mod_four)
-fviz_cluster(agnes_mod_ten)
+saveRDS(sampled_data, here("Data", "Results", "agnes_results.rds"))
+write_csv(sampled_data, here("Data", "Results", "agnes_results.csv"))
 ```
 
