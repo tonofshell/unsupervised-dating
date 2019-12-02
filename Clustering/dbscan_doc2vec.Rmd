@@ -1,0 +1,60 @@
+---
+title: "DBSCAN on Doc2Vec Results"
+author: "Adam Shelton"
+date: "12/2/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+library(here)
+library(cluster)
+library(FactoMineR)
+library(factoextra)
+library(NbClust)
+library(dbscan)
+library(cowplot)
+library(skimr)
+library(ggcorrplot)
+
+knitr::opts_chunk$set(echo = TRUE, fig.height = 6, fig.width = 8, dpi = 400)
+
+set.seed(60615)
+```
+
+## About the Data
+```{r data}
+doc2vec_data = read_csv(here("Data", "doc2vec_results.csv"))
+doc2vec_data %>% skim() %>% partition() %>% .$numeric %>% kable()
+doc2vec_data %>% select(-X1) %>% {ggcorrplot(cor(.), p.mat = cor_pmat(.), hc.order = TRUE, insig = "blank")}
+```
+
+## Clusterability
+```{r clusterability}
+clusterability = doc2vec_data %>% select(-X1) %>% get_clust_tendency(n = 50)
+#clusterability$plot
+```
+
+The Doc2Vec data has a Hopkins Statistic of `r round(clusterability$hopkins_stat, 3)`.
+
+## Identifying Outliers with DBSCAN
+
+### Building a DBSCAN Model
+```{r dbscan}
+doc2vec_data %>% select(-X1) %>% kNNdistplot(k = 5)
+dbscan_mod = doc2vec_data %>% select(-X1) %>% dbscan(16, 5)
+doc2vec_data %>% select(-X1) %>% {fviz_cluster(dbscan_mod, data = .)}
+
+dbscan_results = doc2vec_data %>% bind_cols(enframe(dbscan_mod$cluster, name = NULL, value = "cluster"))
+```
+
+The DBSCAN model identified `r sum(dbscan_mod$cluster == 0)` outliers, `r round(sum(dbscan_mod$cluster == 0) / length(dbscan_mod$cluster) * 100, 2)`% of the observations in the Doc2Vec results.
+
+### Interpreting Outliers
+```{r interpret-outliers}
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+```
+
