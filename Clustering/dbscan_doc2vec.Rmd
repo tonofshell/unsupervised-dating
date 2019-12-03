@@ -52,9 +52,34 @@ dbscan_results = doc2vec_data %>% bind_cols(enframe(dbscan_mod$cluster, name = N
 The DBSCAN model identified `r sum(dbscan_mod$cluster == 0)` outliers, `r round(sum(dbscan_mod$cluster == 0) / length(dbscan_mod$cluster) * 100, 2)`% of the observations in the Doc2Vec results.
 
 ### Interpreting Outliers
+```{r merge}
+merged_demo_data = read_csv(here("Data", "compressed_okcupid.csv")) %>% select(-essay0, -essay9) %>% bind_cols(select(dbscan_results, cluster))
+merged_doc2vec_data = read_csv(here("Data", "compressed_okcupid.csv")) %>% select(X1, essay0, essay9) %>% bind_cols(select(dbscan_results, -X1))
+```
+
+#### Demographic Data
+```{r demo-data}
+modal = function(vect, percent = FALSE) {
+  library(tidyverse)
+  modal_val = vect %>% unlist() %>% table() %>% .[. == max(.)] %>% names()
+  if (percent) {
+    return(vect %>% unlist() %>% .[. == modal_val] %>% (function(x) length(x) / length(vect)))
+    }
+  modal_val
+}
+
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal) %>% kable(caption = "Mode by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, percent = TRUE) %>% mutate_if(is.numeric, round, 3) %>% kable(caption = "Mode by Cluster")
+```
+
+
+#### Doc2Vec Data
 ```{r interpret-outliers}
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
 ```
-
