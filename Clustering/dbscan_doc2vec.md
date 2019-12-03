@@ -118,6 +118,122 @@ the Doc2Vec results.
 ### Interpreting Outliers
 
 ``` r
+merged_demo_data = read_csv(here("Data", "compressed_okcupid.csv")) %>% select(-essay0, -essay9) %>% bind_cols(select(dbscan_results, cluster))
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   age = col_double(),
+    ##   body_type = col_character(),
+    ##   education = col_character(),
+    ##   essay0 = col_character(),
+    ##   essay9 = col_character(),
+    ##   ethnicity = col_character(),
+    ##   height = col_double(),
+    ##   edu = col_character(),
+    ##   fit = col_character(),
+    ##   race_ethnicity = col_character(),
+    ##   height_group = col_character(),
+    ##   long_words = col_double(),
+    ##   flesch = col_double()
+    ## )
+
+``` r
+merged_doc2vec_data = read_csv(here("Data", "compressed_okcupid.csv")) %>% select(X1, essay0, essay9) %>% bind_cols(select(dbscan_results, -X1))
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   age = col_double(),
+    ##   body_type = col_character(),
+    ##   education = col_character(),
+    ##   essay0 = col_character(),
+    ##   essay9 = col_character(),
+    ##   ethnicity = col_character(),
+    ##   height = col_double(),
+    ##   edu = col_character(),
+    ##   fit = col_character(),
+    ##   race_ethnicity = col_character(),
+    ##   height_group = col_character(),
+    ##   long_words = col_double(),
+    ##   flesch = col_double()
+    ## )
+
+#### Demographic Data
+
+``` r
+modal = function(vect, percent = FALSE) {
+  library(tidyverse)
+  modal_val = vect %>% unlist() %>% table() %>% .[. == max(.)] %>% names()
+  if (percent) {
+    return(vect %>% unlist() %>% .[. == modal_val] %>% (function(x) length(x) / length(vect)))
+    }
+  modal_val
+}
+
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+```
+
+| cluster |      age |   height | long\_words |   flesch |
+| ------: | -------: | -------: | ----------: | -------: |
+|       0 | 32.83375 | 70.46096 |     9.81738 | 8.363618 |
+|       1 | 31.98486 | 70.50906 |    11.38909 | 7.235157 |
+
+Mean by Cluster
+
+``` r
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+```
+
+| cluster |      age |   height | long\_words |   flesch |
+| ------: | -------: | -------: | ----------: | -------: |
+|       0 | 9.483912 | 2.918241 |    11.55329 | 6.748615 |
+|       1 | 9.069398 | 3.040148 |    13.34959 | 4.673983 |
+
+Standard Deviation by Cluster
+
+``` r
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+```
+
+| cluster | age | height | long\_words |   flesch |
+| ------: | --: | -----: | ----------: | -------: |
+|       0 |  31 |     70 |           7 | 6.793437 |
+|       1 |  30 |     70 |           8 | 6.723454 |
+
+Median by Cluster
+
+``` r
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal) %>% kable(caption = "Mode by Cluster")
+```
+
+| cluster | body\_type | ethnicity | edu                   | fit | race\_ethnicity | height\_group |
+| :------ | :--------- | :-------- | :-------------------- | :-- | :-------------- | :------------ |
+| 0       | average    | white     | More than High School | fit | White           | not\_short    |
+| 1       | athletic   | white     | More than High School | fit | White           | not\_short    |
+
+Mode by Cluster
+
+``` r
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, percent = TRUE) %>% mutate_if(is.numeric, round, 3) %>% kable(caption = "Mode by Cluster")
+```
+
+| cluster | body\_type | ethnicity |   edu |   fit | race\_ethnicity | height\_group |
+| :------ | ---------: | --------: | ----: | ----: | --------------: | ------------: |
+| 0       |      0.285 |     0.617 | 0.686 | 0.516 |           0.634 |         0.646 |
+| 1       |      0.297 |     0.611 | 0.723 | 0.562 |           0.622 |         0.649 |
+
+Mode by Cluster
+
+#### Doc2Vec Data
+
+``` r
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
 ```
 
