@@ -169,19 +169,16 @@ switch_other = function(EXPR, ..., other = NULL) {
 
 ## Import Data
 ```{r data}
-original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
+original_data = read_csv(here("Data", "compressed_okcupid.csv"))
 
 new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix() %>% scale()
 
-cluster_data = original_data %>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% select(-c(cats, dogs)) %>%  mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) 
-
-names(cluster_data) %>% setdiff(cluster_data %>% drop_high_na(0.35) %>% names)
-
-#%>% .[sample(1:nrow(.), 500), ]
+cluster_data = original_data #%>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% select(-c(cats, dogs)) %>%  mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) 
 ```
 
+<!--
 ## Imputing Data
-```{r imputing, error=TRUE, cache=TRUE}
+```{r imputing, eval=FALSE, error=TRUE, cache=TRUE, include=FALSE}
 if ("full_imputed.rds" %in% list.files(here("Data"))) {
   imputed = readRDS(here("Data", "full_imputed.rds"))
 } else {
@@ -207,7 +204,6 @@ imputed_data = imputed$ximp
 imputed$OOBerror %>% kable()
 ```
 
-<!--
 # Take 1
 
 ## PCA
@@ -251,14 +247,14 @@ fviz_cluster(test, new_features, labelsize = 0)
 -->
 ## Descriptive Statistics
 ```{r descr-stats, cache=TRUE, fig.height = 8, fig.width = 11,}
-skim_list = imputed_data %>% as_tibble() %>% skim() %>% partition()
+skim_list = original_data %>% skim() %>% partition()
 
 skim_list$numeric %>% kable()
-skim_list$factor %>% kable()
+skim_list$character%>% kable()
 
-imputed_data %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
+original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
 
-clusterability = imputed_data %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
+clusterability = original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
 clusterability$hopkins_stat
 clusterability$plot
 ```
@@ -266,15 +262,15 @@ clusterability$plot
 
 ## PCA
 ```{r pca, cache=TRUE}
-imputed_data %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
+original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
 ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ```
 
 <!--## PAM
 ```{r pam, eval=FALSE, include=FALSE}
-gower_data = original_data %>% imputeFAMD() %>% mutate_all(factor) %>% daisy(metric = "gower")
+gower_data = original_data %>% mutate_all(factor) %>% daisy(metric = "gower")
 
-gower_data %>% fviz_dist()
+#gower_data %>% fviz_dist()
 
 sil_width <- c(NA)
 for(i in 2:15){  
@@ -288,10 +284,11 @@ plot(1:8, sil_width,
 lines(1:8, sil_width)
 ```
 -->
+
 ## Agglomerative Nesting
 ```{r agg-nest, error=TRUE}
-sampled_data = imputed_data %>% as_tibble() %>% sample_n(2000) 
-agnes_data = sampled_data %>% mutate_all(as.numeric) %>% mutate_all(scale) 
+sampled_data = original_data %>% sample_n(2000) 
+agnes_data = sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
 agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
 nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.nc = 2, max.nc = 10, method = "ward.D2")
 

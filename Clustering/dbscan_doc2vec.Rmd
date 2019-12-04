@@ -83,3 +83,9 @@ dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(mean) %>%
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
 dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
 ```
+
+### Profile Differences
+```{r profile-diff}
+merged_doc2vec_data %>% select(cluster, essay0) %>% group_by(cluster) %>% sample_n(25) %>% kable()
+```
+
