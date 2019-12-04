@@ -47,6 +47,7 @@ dbscan_mod = doc2vec_data %>% select(-X1) %>% dbscan(16, 5)
 doc2vec_data %>% select(-X1) %>% {fviz_cluster(dbscan_mod, data = .)}
 
 dbscan_results = doc2vec_data %>% bind_cols(enframe(dbscan_mod$cluster, name = NULL, value = "cluster"))
+read_csv(here("Data", "compressed_with_results.csv")) %>% mutate(dbscan_cluster = dbscan_mod$cluster) %>% write_csv(here("Data", "compressed_with_results.csv"))
 ```
 
 The DBSCAN model identified `r sum(dbscan_mod$cluster == 0)` outliers, `r round(sum(dbscan_mod$cluster == 0) / length(dbscan_mod$cluster) * 100, 2)`% of the observations in the Doc2Vec results.

@@ -110,7 +110,28 @@ doc2vec_data %>% select(-X1) %>% {fviz_cluster(dbscan_mod, data = .)}
 
 ``` r
 dbscan_results = doc2vec_data %>% bind_cols(enframe(dbscan_mod$cluster, name = NULL, value = "cluster"))
+read_csv(here("Data", "compressed_with_results.csv")) %>% mutate(dbscan_cluster = dbscan_mod$cluster) %>% write_csv(here("Data", "compressed_with_results.csv"))
 ```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   age = col_double(),
+    ##   body_type = col_character(),
+    ##   education = col_character(),
+    ##   essay0 = col_character(),
+    ##   essay9 = col_character(),
+    ##   ethnicity = col_character(),
+    ##   height = col_double(),
+    ##   edu = col_character(),
+    ##   fit = col_character(),
+    ##   race_ethnicity = col_character(),
+    ##   height_group = col_character(),
+    ##   long_words = col_double(),
+    ##   flesch = col_double()
+    ## )
 
 The DBSCAN model identified 794 outliers, 4.22% of the observations in
 the Doc2Vec results.
