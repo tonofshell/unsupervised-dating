@@ -6,8 +6,30 @@ Adam Shelton
 ## Import Data
 
 ``` r
-original_data = readRDS(here("Data", "full_ok_cupid_cleaned.rds"))
+original_data = read_csv(here("Data", "compressed_okcupid.csv"))
+```
 
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   age = col_double(),
+    ##   body_type = col_character(),
+    ##   education = col_character(),
+    ##   essay0 = col_character(),
+    ##   essay9 = col_character(),
+    ##   ethnicity = col_character(),
+    ##   height = col_double(),
+    ##   edu = col_character(),
+    ##   fit = col_character(),
+    ##   race_ethnicity = col_character(),
+    ##   height_group = col_character(),
+    ##   long_words = col_double(),
+    ##   flesch = col_double()
+    ## )
+
+``` r
 new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix() %>% scale()
 ```
 
@@ -21,51 +43,13 @@ new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.
     ## See spec(...) for full column specifications.
 
 ``` r
-cluster_data = original_data %>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% select(-c(cats, dogs)) %>%  mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) 
-
-names(cluster_data) %>% setdiff(cluster_data %>% drop_high_na(0.35) %>% names)
+cluster_data = original_data #%>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% select(-c(cats, dogs)) %>%  mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) 
 ```
-
-    ## [1] "diet"        "sign_import" "kids"
-
-``` r
-#%>% .[sample(1:nrow(.), 500), ]
-```
-
-## Imputing Data
-
-``` r
-if ("full_imputed.rds" %in% list.files(here("Data"))) {
-  imputed = readRDS(here("Data", "full_imputed.rds"))
-} else {
-  setup_cl = function(seed = round(Sys.time())) {
-  require(parallel)
-  if (exists("cl")) {
-    print("Stopping existing cluster")
-    try(parallel::stopCluster(cl))
-  }
-  assign("cl", parallel::makeCluster(parallel::detectCores() - 1, outfile = "out.txt"), envir = globalenv())
-  RNGkind("L'Ecuyer-CMRG")
-  print(paste("Using", as.numeric(seed), "as parallel RNG seed"))
-  clusterSetRNGStream(cl, seed)
-}
-setup_cl(60615)
-registerDoParallel(cl)
-  tic()
-  imputed = cluster_data %>% as.data.frame() %>% missForest(parallelize = "forests")
-  toc()
-  saveRDS(imputed, here("Data", "full_imputed.rds"))  
-}
-imputed_data = imputed$ximp
-imputed$OOBerror %>% kable()
-```
-
-|       |         x |
-| ----- | --------: |
-| NRMSE | 0.0055781 |
-| PFC   | 0.3178881 |
 
 <!--
+## Imputing Data
+
+
 # Take 1
 
 ## PCA
@@ -85,50 +69,47 @@ imputed$OOBerror %>% kable()
 ## Descriptive Statistics
 
 ``` r
-skim_list = imputed_data %>% as_tibble() %>% skim() %>% partition()
+skim_list = original_data %>% skim() %>% partition()
 
 skim_list$numeric %>% kable()
 ```
 
-| skim\_variable      | n\_missing | complete\_rate |       mean |         sd | p0 |       p25 |       p50 |      p75 |     p100 | hist  |
-| :------------------ | ---------: | -------------: | ---------: | ---------: | -: | --------: | --------: | -------: | -------: | :---- |
-| age                 |          0 |              1 | 32.3484638 |  9.4569922 | 18 | 26.000000 | 30.000000 | 37.00000 | 110.0000 | ▇▂▁▁▁ |
-| multi\_ling         |          0 |              1 |  0.5144091 |  0.4996107 |  0 |  0.000000 |  1.000000 |  1.00000 |   1.0000 | ▇▁▁▁▇ |
-| days\_since\_online |          0 |              1 | 40.1846817 | 77.3470630 |  0 |  1.328472 |  3.792361 | 32.69444 | 370.2951 | ▇▁▁▁▁ |
+| skim\_variable | n\_missing | complete\_rate |         mean |           sd |      p0 |          p25 |          p50 |       p75 |  p100 | hist  |
+| :------------- | ---------: | -------------: | -----------: | -----------: | ------: | -----------: | -----------: | --------: | ----: | :---- |
+| X1             |          0 |              1 | 29725.559450 | 17242.921552 |    0.00 | 14987.000000 | 29548.000000 | 44305.000 | 60550 | ▇▇▇▇▇ |
+| age            |          0 |              1 |    32.020657 |     9.088597 |   18.00 |    26.000000 |    30.000000 |    36.000 |    69 | ▇▇▂▁▁ |
+| height         |          0 |              1 |    70.507036 |     3.035048 |    3.00 |    69.000000 |    70.000000 |    72.000 |    95 | ▁▁▁▇▁ |
+| long\_words    |          0 |              1 |    11.322819 |    13.282247 |    0.00 |     3.000000 |     8.000000 |    15.000 |   446 | ▇▁▁▁▁ |
+| flesch         |          0 |              1 |     7.282737 |     4.784808 | \-15.59 |     4.853526 |     6.726154 |     8.955 |   268 | ▇▁▁▁▁ |
 
 ``` r
-skim_list$factor %>% kable()
+skim_list$character%>% kable()
 ```
 
-| skim\_variable | n\_missing | complete\_rate | ordered | n\_unique | top\_counts                                   |
-| :------------- | ---------: | -------------: | :------ | --------: | :-------------------------------------------- |
-| body\_type     |          0 |              1 | FALSE   |        12 | ave: 15294, fit: 13416, ath: 12847, cur: 5394 |
-| diet           |          0 |              1 | FALSE   |         6 | any: 50043, veg: 6823, oth: 1954, veg: 739    |
-| drinks         |          0 |              1 | FALSE   |         6 | soc: 44135, rar: 6132, oft: 5280, not: 3447   |
-| drugs          |          0 |              1 | FALSE   |         3 | nev: 48945, som: 10426, oft: 420              |
-| education      |          0 |              1 | FALSE   |        32 | gra: 26422, gra: 9961, wor: 6480, gra: 1936   |
-| ethnicity      |          0 |              1 | FALSE   |        11 | whi: 36205, asi: 6848, mul: 5426, his: 3180   |
-| job            |          0 |              1 | FALSE   |        21 | oth: 7835, stu: 6315, com: 5271, sci: 5220    |
-| orientation    |          0 |              1 | FALSE   |         3 | str: 51483, gay: 5554, bis: 2754              |
-| religion       |          0 |              1 | FALSE   |         9 | agn: 11333, oth: 11182, ath: 10130, chr: 9403 |
-| sex            |          0 |              1 | FALSE   |         2 | m: 35728, f: 24063                            |
-| smokes         |          0 |              1 | FALSE   |         5 | no: 48544, som: 4096, whe: 3250, yes: 2388    |
-| status         |          0 |              1 | FALSE   |         5 | sin: 55554, see: 2057, ava: 1860, mar: 310    |
-| sign\_import   |          0 |              1 | FALSE   |         3 | it’: 30649, it : 28452, it : 690              |
-| kids           |          0 |              1 | FALSE   |         3 | doe: 45706, has: 8737, has: 5348              |
+| skim\_variable  | n\_missing | complete\_rate | min |   max | empty | n\_unique | whitespace |
+| :-------------- | ---------: | -------------: | --: | ----: | ----: | --------: | ---------: |
+| body\_type      |          0 |              1 |   3 |    14 |     0 |        12 |          0 |
+| education       |          0 |              1 |  10 |    33 |     0 |        32 |          0 |
+| essay0          |          0 |              1 |   1 | 16943 |     0 |     18814 |          0 |
+| essay9          |          0 |              1 |   1 | 10849 |     0 |     18252 |          0 |
+| ethnicity       |          0 |              1 |   5 |   103 |     0 |       151 |          0 |
+| edu             |          0 |              1 |   7 |    21 |     0 |         3 |          0 |
+| fit             |          0 |              1 |   3 |     7 |     0 |         3 |          0 |
+| race\_ethnicity |          0 |              1 |   5 |     8 |     0 |         6 |          0 |
+| height\_group   |          0 |              1 |   5 |     9 |     0 |         2 |          0 |
 
 ``` r
-imputed_data %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
+original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
 ```
 
 ![](advanced_clustering_files/figure-gfm/descr-stats-1.png)<!-- -->
 
 ``` r
-clusterability = imputed_data %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
+clusterability = original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
 clusterability$hopkins_stat
 ```
 
-    ## [1] 0.2012606
+    ## [1] 0.7702142
 
 ``` r
 clusterability$plot
@@ -139,7 +120,7 @@ clusterability$plot
 ## PCA
 
 ``` r
-imputed_data %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
+original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
 ```
 
 ![](advanced_clustering_files/figure-gfm/pca-1.png)<!-- -->
@@ -155,17 +136,115 @@ ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ## Agglomerative Nesting
 
 ``` r
-sampled_data = imputed_data %>% as_tibble() %>% sample_n(2000) 
-agnes_data = sampled_data %>% mutate_all(as.numeric) %>% mutate_all(scale) 
+sampled_data = original_data %>% sample_n(2000) 
+agnes_data = sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
 agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
 ```
 
-    ## Warning in daisy(., metric = "gower"): binary variable(s) 11, 16 treated as
-    ## interval scaled
+    ## Warning in daisy(., metric = "gower"): binary variable(s) 10 treated as interval
+    ## scaled
 
 ``` r
 nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.nc = 2, max.nc = 10, method = "ward.D2")
 ```
+
+    ## Warning in log(det(P)/det(W)): NaNs produced
+
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
+    
+    ## Warning in log(det(P)/det(W)): NaNs produced
 
 ![](advanced_clustering_files/figure-gfm/agg-nest-1.png)<!-- -->
 
@@ -184,12 +263,13 @@ nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.
     ##  
     ## ******************************************************************* 
     ## * Among all indices:                                                
-    ## * 3 proposed 2 as the best number of clusters 
-    ## * 11 proposed 3 as the best number of clusters 
+    ## * 4 proposed 2 as the best number of clusters 
+    ## * 7 proposed 3 as the best number of clusters 
     ## * 3 proposed 4 as the best number of clusters 
-    ## * 2 proposed 5 as the best number of clusters 
-    ## * 1 proposed 6 as the best number of clusters 
-    ## * 2 proposed 8 as the best number of clusters 
+    ## * 5 proposed 6 as the best number of clusters 
+    ## * 1 proposed 7 as the best number of clusters 
+    ## * 1 proposed 8 as the best number of clusters 
+    ## * 1 proposed 9 as the best number of clusters 
     ## * 1 proposed 10 as the best number of clusters 
     ## 
     ##                    ***** Conclusion *****                            
@@ -207,12 +287,13 @@ fviz_nbclust(nb_results)
     ## ===================
     ## * 2 proposed  0 as the best number of clusters
     ## * 1 proposed  1 as the best number of clusters
-    ## * 3 proposed  2 as the best number of clusters
-    ## * 11 proposed  3 as the best number of clusters
+    ## * 4 proposed  2 as the best number of clusters
+    ## * 7 proposed  3 as the best number of clusters
     ## * 3 proposed  4 as the best number of clusters
-    ## * 2 proposed  5 as the best number of clusters
-    ## * 1 proposed  6 as the best number of clusters
-    ## * 2 proposed  8 as the best number of clusters
+    ## * 5 proposed  6 as the best number of clusters
+    ## * 1 proposed  7 as the best number of clusters
+    ## * 1 proposed  8 as the best number of clusters
+    ## * 1 proposed  9 as the best number of clusters
     ## * 1 proposed  10 as the best number of clusters
     ## 
     ## Conclusion
