@@ -120,7 +120,8 @@ clusterability$plot
 ## PCA
 
 ``` r
-original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
+sampled_data = original_data %>% sample_n(2000) 
+sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
 ```
 
 ![](advanced_clustering_files/figure-gfm/pca-1.png)<!-- -->
@@ -136,7 +137,6 @@ ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ## Agglomerative Nesting
 
 ``` r
-sampled_data = original_data %>% sample_n(2000) 
 agnes_data = sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
 agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
 ```
@@ -303,7 +303,7 @@ fviz_nbclust(nb_results)
 ![](advanced_clustering_files/figure-gfm/agg-nest-3.png)<!-- -->
 
 ``` r
-agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 3, hc_func = "agnes")
+agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 3, hc_func = "agnes", hc_method = "ward.D2")
 fviz_dend(agnes_mod)
 ```
 
