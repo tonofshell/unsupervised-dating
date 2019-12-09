@@ -1,0 +1,208 @@
+---
+title: "stm-okcupid"
+author: "Li Liu"
+date: "November 24, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## load packages and data
+
+```{r}
+library(stm)
+library(quanteda)
+library(topicmodels)
+library(tidytext)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(tm)
+library(grid)
+library(wordcloud)
+library(wordcloud2)
+library(tidyverse)
+
+#sample data with essay 0 and demo clusters 
+essay <- read.csv('compressed_okcupid.csv')
+```
+
+## data wrangling
+```{r}
+#convert factor type to character
+essay$essay0 <- as.character (essay$essay0)
+
+list_of_values <- c('love','people','life','time','enjoy','friends','fun', 'people','music')
+
+'%ni%' <- Negate('%in%')
+                    
+tidy_essay <- essay %>%
+  mutate(race_ethnicity = factor(race_ethnicity, levels = unique(race_ethnicity)))%>%
+  mutate(line = row_number()) %>%
+  unnest_tokens(word, essay0) %>%
+  anti_join(stop_words) %>%
+  filter(word %ni% list_of_values)
+
+```
+
+## exploring tf-idf
+
+```{r}
+essay_tf_idf <- tidy_essay %>%
+  count(race_ethnicity, word, sort = TRUE) %>%
+  bind_tf_idf(word, race_ethnicity, n) %>%
+  arrange(-tf_idf) %>%
+  group_by(race_ethnicity) %>%
+  top_n(15) %>%
+  ungroup
+
+
+essay_tf_idf %>%
+  mutate(word = reorder_within(word, tf_idf, race_ethnicity)) %>%
+  ggplot(aes(word, tf_idf, fill = race_ethnicity)) +
+  geom_col(alpha = 0.8, show.legend = FALSE) +
+  facet_wrap(~ race_ethnicity, scales = "free", ncol = 3) +
+  scale_x_reordered() +
+  coord_flip() +
+  theme(strip.text=element_text(size=11)) +
+  labs(x = NULL, y = "tf-idf",
+       title = "Highest tf-idf words in Each Demographic Clusters",
+       subtitle = "Individual cluster have different words to represent themselves")
+
+```
+
+
+## build document-term matrix
+
+```{r}
+essay_dfm <- tidy_essay %>%
+  count(race_ethnicity, word, sort = TRUE) %>%
+  cast_dfm(race_ethnicity, word, n)
+
+essay_sparse <- tidy_essay %>%
+  count(race_ethnicity, word, sort = TRUE) %>%
+  cast_sparse(race_ethnicity, word, n)
+
+```
+
+## structural topic model
+
+```{r}
+topic_num <- 15
+
+essay_topic_model <- stm(essay_dfm, K = topic_num, 
+                   verbose = FALSE, 
+                   init.type = "Spectral", prevalence = ~ essay$race_ethnicity)
+
+summary(essay_topic_model)
+```
+
+##
+```{r}
+plot.STM(essay_topic_model, type = "labels") 
+
+```
+
+
+
+## plot total topic share
+```{r}
+plot(essay_topic_model, type = "summary", text.cex = 0.8)
+```
+
+## visualize topic constrast between two topics 
+```{r}
+plot(essay_topic_model, type = "perspectives", topics = c(1,3)) 
+```
+
+## plot topic proportions within documents 
+```{r}
+plot(essay_topic_model, type = "hist")
+```
+
+
+## network of topics
+
+Positive correlations between topics indicate that both topics are likely to be discussed within a document. A graphical network display shows how closely related topics are to one another (i.e., how likely they are to appear in the same document). This function requires igraph R package.
+
+Source: https://github.com/dondealban/learning-stm
+
+```{r}
+mod.out.corr <- topicCorr(essay_topic_model)
+plot(mod.out.corr)
+```
+
+## word cloud of certain topic
+```{r}
+cloud(essay_topic_model, topic=2)
+```
+
+```{r}
+cloud(essay_topic_model, topic=4)
+```
+
+
+
+
+
+## beta prob: Distribution of word probabilities for each topic
+```{r}
+td_beta <- tidy(essay_topic_model)
+
+td_beta %>%
+  group_by(topic) %>%
+  top_n(10, beta) %>%
+  ungroup() %>%
+  mutate(topic = paste0("Topic ", topic),
+         term = reorder_within(term, beta, topic)) %>%
+  ggplot(aes(term, beta, fill = as.factor(topic))) +
+  geom_col(alpha = 0.8, show.legend = FALSE) +
+  facet_wrap(~ topic, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  labs(x = NULL, y = expression(beta),
+       title = "Highest word probabilities for each topic",
+       subtitle = "Different words are associated with different topics")
+```
+
+
+## gamma prob: Distribution of document probabilities for each topic
+```{r}
+td_gamma <- tidy(essay_topic_model, matrix = "gamma",                    
+                 document_names = rownames(essay_dfm))
+
+ggplot(td_gamma, aes(gamma, fill = as.factor(topic))) +
+  geom_histogram(alpha = 0.8, show.legend = FALSE) +
+  facet_wrap(~ topic, ncol = 3) +
+  labs(title = "Distribution of document probabilities for each topic",
+       subtitle = "Each topic is associated with 1-2 clusters",
+       y = "Number of stories", x = expression(gamma))
+
+```
+
+
+
+#### Reference
+
+https://www.tidytextmining.com/topicmodeling.html
+
+https://rpubs.com/cbpuschmann/un-stm
+
+https://juliasilge.com/blog/sherlock-holmes-stm/
+
+https://juliasilge.shinyapps.io/sherlock-holmes/#section-documents-by-topic
+
+https://github.com/dondealban/learning-stm
+
+https://blogs.uoregon.edu/rclub/2016/04/05/structural-topic-modeling/
+
+
+Roberts, M.E., Stewart, B.M. Tingley, D. & Benoit, K. (2017) stm: Estimation of the Structural Topic Model. (https://cran.r-project.org/web/packages/stm/index.html)
+
+
+
+![stm_diagram](stm_diagram.png)
+
