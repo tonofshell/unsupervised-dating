@@ -28,9 +28,21 @@ tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Ite
 
 # Literature Review
 
+Self-concept and self-representation have long served as grounds of debate in cognitive and positive psychology [@bruning1999cognitive] as well as social anthropology [@goffman1975presentation]. The recent spread of social networking and its specific affordances have allowed individuals to build different online ‘selves’ [@papacharissi2010networked]. One such critical scenario may be that of mate selection, which several economists and sociologists have likened this to ‘marriage marketplace’ [@hitsch2010matching]. Several online dating service providers in developed countries may facilitate the expansion of potential mates beyond the limits of even extended offline social networks @cacioppo2013marital assert that as many as one in three marriages in the United States is facilitated through these portals. @heino2010relationshopping argue that these avenues further entrench the economic dimension through an acute, implicit awareness of ‘relationshopping’. Herein, potential partners are reduced to entries in a catalog to be scrolled through. In this sense, they suggest an emerging conscientiousness of ‘marketing’, with the product being themselves, and the potential mate assuming the role of a buyer (ibid). This perception thus links the private worlds of romantic intimacy with those of mass consumption and broader perceived appeal to the opposite sex. 
+
+Potentially, we will also use some marketing theories to understand our findings. Selling themselves and finding a mate on OkCupid is not very different from selling a product on eBay. Economists have been interested in the matching problem of demand and supply, such as @hitsch2010matching. Since we do not have data on users’ interactions, we will focus primarily on understanding how people brand themselves to stand out in a crowd. For example, brand awareness is a key metric in marketing to quantify the degree to which people recall or recognize a brand. A high level of brand awareness helps a product stand out and get chosen when consumers face many alternatives. 
+
+This could be applied to understand online dating. Let us imagine your future mate uses the filter to narrow down the consideration sets. He/She might still face many similar choices with high matching scores to choose from. If you want to stand out from the pool, you must make yourself memorable by highlighting the uniqueness. Thus, one possible idea in this project is to explore and understand how users could increase their brand awareness and differentiate themselves in their segments
+
 # Empirical Strategy
 
 # Analysis & Results
+
+## Clustering of Demographic Data
+
+## Text Analysis
+
+## Combining Text and Demographic Data
 
 # Discussion
 
