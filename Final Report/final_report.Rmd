@@ -2,214 +2,39 @@
 title: "Final Report"
 author: "Li Liu, Abhishek Pandit, Adam Shelton"
 date: "12/7/2019"
-output: pdf_document
+header-includes:
+    - \usepackage{setspace}\doublespacing
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 2
+bibliography: sources.bib
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(reticulate)
 library(here)
+library(knitr)
 
 knitr::opts_chunk$set(echo = TRUE)
-
-# Install python packages to a new virtual environment for `reticulate` to use
-virtualenv_create(use_virtualenv(here("python_venv")))
-use_virtualenv(here("python_venv"))
-py_install(c("gensim", "nltk", "numpy", "pandas", "seaborn"), here("python_venv"))
+```
+# Contributions
+```{r contrib, echo=FALSE}
+tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("Item 1", "Item 2", "Item 3")) %>% kable(caption = "Contributions by each team member")
 ```
 
+\newpage
+# Introduction
 
+# Literature Review
 
-## Python Test
+# Empirical Strategy
 
-```{python python-imports}
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-from nltk.tokenize import word_tokenize
-import nltk
-nltk.download('punkt')
-import numpy as np
-import pandas as pd
-import warnings
-warnings.filterwarnings('ignore')
-import seaborn as sns
-```
+# Analysis & Results
 
-```{python}
-#%%
+# Discussion
 
-import matplotlib.pyplot as plt
+# Conclusion
 
-#%%
-
-df = pd.read_csv('../Data/compressed_okcupid.csv').dropna(subset=['essay0'])
-df.info()
-
-#%%
-
-data = df['essay0']
-
-#%%
-
-tagged_data = [TaggedDocument(words=word_tokenize(_d.lower()),
-                              tags=[str(i)]) for i, _d in enumerate(df['essay0'])]
-
-#%%
-
-from gensim.models.doc2vec import Doc2Vec
-
-max_epochs = 50
-vec_size = 50
-alpha = 0.025
-
-model = Doc2Vec(size=vec_size,
-                alpha=alpha, 
-                min_alpha=0.00025,
-                min_count=1,
-                dm =1)
-  
-model.build_vocab(tagged_data)
-
-for epoch in range(max_epochs):
-    print('iteration {0}'.format(epoch))
-    model.train(tagged_data,
-                total_examples=model.corpus_count,
-                epochs=model.iter)
-    # decrease the learning rate
-    model.alpha -= 0.0002
-    # fix the learning rate, no decay
-    model.min_alpha = model.alpha
-
-model.save("dv_50.model")
-print("Model Saved")
-
-#%%
-
-#from gensim.models.doc2vec import Doc2Vec
-
-model= Doc2Vec.load("dv_50.model")
-#to find the vector of a document which is not in training data
-#test_data = word_tokenize("I love chatbots".lower())
-#v1 = model.infer_vector(test_data)
-#print("V1_infer", v1)
-
-# to find most similar doc using tags
-similar_doc = model.docvecs.most_similar('0')
-print(similar_doc)
-
-#%%
-
-model.docvecs.vectors_docs.shape
-type(model.docvecs.vectors_docs)
-
-#%%
-
-#Visualize TSNE with doc2vec
-from sklearn.manifold import TSNE
-def doc2vec_tsne_plot(doc_model, labels):
-
-    tokens = []
-    for i in range(len(doc_model.docvecs.vectors_docs)):
-        tokens.append(doc_model.docvecs.vectors_docs[i])
-
-    # Reduce 100 dimensional vectors down into 2-dimensional space so that we can see them
-    tsne_model = TSNE(perplexity=40, n_components=2, init='pca', n_iter=2500, random_state=23)
-    new_values = tsne_model.fit_transform(tokens)
-
-    X = [doc[0] for doc in new_values]
-    y = [doc[1] for doc in new_values]
-
-    # Combine data into DataFrame, so that we plot it easily using Seaborn
-    df = pd.DataFrame({'X':X, 'y':y, 'Cuisine':labels})
-    plt.figure(figsize=(16, 16))
-    sns.scatterplot(x="X", y="y", hue="Cuisine", data=df)
-    return
-
-doc2vec_tsne_plot(model, df['height'])
-
-#%%
-
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
-
-X = model.docvecs.vectors_docs
-Sum_of_squared_distances = []
-K = range(2,15)
-for k in K:
-    km = KMeans(n_clusters=k)
-    km = km.fit(X)
-    Sum_of_squared_distances.append(km.inertia_)
-
-#%%
-
-plt.plot(K, Sum_of_squared_distances, 'bx-')
-plt.xlabel('Number of Clusters')
-plt.ylabel('Sum of Squared Distances from Cluster Centres')
-plt.title('Elbow Method For Optimal Number of Clusters', fontsize=15)
-plt.savefig('Elbow_Plot.png', bbox_inches='tight')
-
-
-#%%
-
-num_clusters = 4
-num_seeds = 4
-max_iterations = 300
-labels_color_map = {
-    0: '#20b2aa', 1: '#ff7373', 2: '#ffe4e1', 3: '#005073', 4: '#4d0404'
-}
-pca_num_components = 2
-#texts_list = df['essay0']
-# calculate tf-idf of texts
-#tf_idf_vectorizer = TfidfVectorizer(analyzer="word", use_idf=True,
-                                    #smooth_idf=True, ngram_range=(2, 3))
-#tf_idf_matrix = tf_idf_vectorizer.fit_transform(texts_list)
-
-# create k-means model with custom config
-clustering_model = KMeans(
-    n_clusters=num_clusters,
-    max_iter=max_iterations,
-    precompute_distances="auto",
-    n_jobs=-1
-)
-
-X = model.docvecs.vectors_docs
-reduced_data = PCA(n_components=pca_num_components).fit_transform(X)
-labels = clustering_model.fit_predict(reduced_data)
-
-#%%
-
-pca_num_components = 2
-X = model.docvecs.vectors_docs
-reduced_data = PCA(n_components=pca_num_components).fit_transform(X)
-
-
-#%%
-
-# there appears to be no column named 'clust_label' in df
-#df[df['clust_label']==1]['essay0']
-
-#%%
-
-from sklearn.manifold import TSNE
-# Creating and fitting the tsne model to the document embeddings
-tsne_model = TSNE(early_exaggeration=4,
-                  n_components=2,
-                  verbose=1,
-                  random_state=2018,
-                  n_iter=300)
-tsne_d2v = tsne_model.fit_transform(model.docvecs.vectors_docs)
-
-#%%
-
-plt.scatter(tsne_d2v [:, 0], tsne_d2v [:, 1])
-plt.show()
-plt.savefig('TSNE_blob.png', bbox_inches='tight')
-
-#%%
-
-output = pd.DataFrame(model.docvecs.vectors_docs)
-output.to_csv("../Data/doc2vec_results.csv")
-output
-
-```
-
+\newpage
+# References
