@@ -7,7 +7,7 @@ header-includes:
 output: 
   pdf_document:
     toc: true
-    toc_depth: 2
+    toc_depth: 1
 bibliography: sources.bib
 ---
 
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("Item 1", "Item 2", "Item 3")) %>% kable(caption = "Contributions by each team member")
+tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("Item 1", "Item 2", "Item 3")) %>% kable()
 ```
 
 \newpage
@@ -47,6 +47,8 @@ This could be applied to understand online dating. Let us imagine your future ma
 # Discussion
 
 # Conclusion
+
+# Appendices
 
 \newpage
 # References
