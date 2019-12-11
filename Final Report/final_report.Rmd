@@ -37,7 +37,7 @@ flatten_jupyter = function(path_to_notebook) {
 ```
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Liu = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("KMeans", "Structural Topic Modeling", "Discussion"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
@@ -138,9 +138,9 @@ The DBSCAN model identified one cluster, and 108 outliers, accounting for 0.57% 
 
 ![DBSCAN Cluster Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/dbscan-2.png)
 
-## Combining Text and Demographic Data
 
 
+## Structural Topic Modeling
 
 ### Motivation
 
@@ -236,7 +236,7 @@ The project faces several limitations at this stage. Firstly, without data on th
 
 ## Structural topic modeling Code
 
-```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-demo+dbscan.RMD"), documentation = 1)), echo = T, eval = F}
+```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-demo+dbscan.Rmd"), documentation = 1)), echo = T, eval = F}
 
 ```
 
