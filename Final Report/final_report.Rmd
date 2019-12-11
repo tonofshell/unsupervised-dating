@@ -21,6 +21,11 @@ library(ggcorrplot)
 library(treemapify)
 library(Cairo)
 
+
+
+#set working directory
+#setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating/Final Report')
+
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, error = FALSE, message = FALSE, dev = "cairo_pdf" , dpi = 400, tidy.opts=list(width.cutoff=50), tidy=TRUE)
 
 # converts a Jupyter notebook to a regular old Python script
@@ -32,7 +37,7 @@ flatten_jupyter = function(path_to_notebook) {
 ```
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
@@ -107,7 +112,22 @@ A DBSCAN model was used to detect outliers within a data-set of 50 vectors calcu
 
 ## Combining Text and Demographic Data
 
-# Discussion
+
+## Output
+
+
+
+<img width="30%" src="preference_selection.png"/>
+<img width="30%" src="profile_help.png"/>
+<img width="30%" src="profile_help_fixed.png"/>
+
+The above three pictures show the protocol of the final product that we have in mind. The protocol uses the example of Li (one of the project members), although the information is hypothetical. The first picture displays his demographic information and a short self-introduction. The second picture shows that the new algorithm highlights the common and memorable words by comparing them with the frequencies among his peers. He also gets a score of 63 and some tips on improving the writing. The third picture is the revised version of previous writing, which now Li has a memorable self-introduction with an increased score of 87. He should be confident to reach out to other users on OkCupid now. 
+
+
+## Discussion
+
+The project faces several limitations at this stage. Firstly, without data on the outcome (such as the number of messages), we do not know have a relative measure for the self-introductions' memorabilities. As a result, we don't have the outcomes to train the scoring function with machine learning. Secondly, without follow-up interviews, we cannot measure whether the specific choice of words was aimed at authenticity or matches with an awareness of 'relationshopping' (experienced users use certain phrases fraudulently to hook others). Thirdly, without the users' other profile images, we cannot estimate the effect of a memorable self-introduction on outcomes as the quality of images is a potential moderating variable.
+
 
 # Conclusion
 
