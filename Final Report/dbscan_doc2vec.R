@@ -1,0 +1,74 @@
+## ----setup, include=FALSE-----------------------------------------------------
+library(tidyverse)
+library(knitr)
+library(here)
+library(cluster)
+library(FactoMineR)
+library(factoextra)
+library(NbClust)
+library(dbscan)
+library(cowplot)
+library(skimr)
+library(ggcorrplot)
+
+knitr::opts_chunk$set(echo = TRUE, fig.height = 6, fig.width = 8, dpi = 400)
+
+set.seed(60615)
+
+
+## ----data---------------------------------------------------------------------
+demo_data = read_csv(here("Data", "compressed_okcupid.csv"))
+doc2vec_data = read_csv(here("Data", "doc2vec_results.csv")) %>% bind_cols(select(demo_data, long_words, flesch)) %>% scale() %>% as_tibble()
+doc2vec_data %>% skim() %>% partition() %>% .$numeric %>% kable()
+doc2vec_data %>% select(-X1) %>% {ggcorrplot(cor(.), p.mat = cor_pmat(.), hc.order = TRUE, insig = "blank")}
+
+
+## ----clusterability-----------------------------------------------------------
+clusterability = doc2vec_data %>% select(-X1) %>% get_clust_tendency(n = 15)
+#clusterability$plot
+
+
+## ----dbscan-------------------------------------------------------------------
+doc2vec_data %>% select(-X1) %>% kNNdistplot(k = 5)
+dbscan_mod = doc2vec_data %>% select(-X1) %>% dbscan(9, 5)
+doc2vec_data %>% select(-X1) %>% {fviz_cluster(dbscan_mod, data = .)}
+
+dbscan_results = doc2vec_data %>% bind_cols(enframe(dbscan_mod$cluster, name = NULL, value = "cluster"))
+read_csv(here("Data", "compressed_with_results.csv")) %>% mutate(dbscan_cluster = dbscan_mod$cluster) %>% write_csv(here("Data", "compressed_with_results.csv"))
+
+
+## ----merge--------------------------------------------------------------------
+merged_demo_data = demo_data %>% select(-essay0, -essay9) %>% bind_cols(select(dbscan_results, cluster))
+merged_doc2vec_data = demo_data %>% select(X1, essay0, essay9) %>% bind_cols(select(dbscan_results, -X1))
+
+
+## ----demo-data----------------------------------------------------------------
+modal = function(vect, percent = FALSE, only_one = FALSE) {
+  library(tidyverse)
+  modal_val = vect %>% unlist() %>% table() %>% .[. == max(.)] %>% names()
+  if (only_one) {
+    modal_val = modal_val[1]
+  }
+  if (percent) {
+    return(vect %>% unlist() %>% .[. == modal_val] %>% (function(x) length(x) / length(vect)))
+    }
+  modal_val
+}
+
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, only_one = TRUE) %>% kable(caption = "Mode by Cluster")
+merged_demo_data %>% select(-c(X1, education)) %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, percent = TRUE, only_one = TRUE) %>% mutate_if(is.numeric, round, 3) %>% kable(caption = "Mode by Cluster")
+
+
+## ----interpret-outliers-------------------------------------------------------
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+dbscan_results %>% select(-X1) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+
+
+## ----profile-diff-------------------------------------------------------------
+merged_doc2vec_data %>% select(cluster, essay0) %>% group_by(cluster) %>% sample_n(10) %>% kable()
+
