@@ -11,20 +11,34 @@ output:
 bibliography: sources.bib
 ---
 
-```{r setup, include=FALSE}
+```{r main-setup, include=FALSE}
 library(tidyverse)
 library(here)
 library(knitr)
+library(kableExtra)
+library(skimr)
+library(ggcorrplot)
+library(treemapify)
+library(Cairo)
 
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, error = FALSE, message = FALSE, dev = "cairo_pdf" , dpi = 400, tidy.opts=list(width.cutoff=50), tidy=TRUE)
+
+# converts a Jupyter notebook to a regular old Python script
+flatten_jupyter = function(path_to_notebook) {
+  output_path = str_replace(path_to_notebook, ".ipynb", ".py")
+  system(paste("python3", "-m", "nbconvert", "--to", "script", paste0("\"", path_to_notebook, "\"")))
+  return(output_path)
+}
 ```
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("Item 1", "Item 2", "Item 3")) %>% kable()
+tibble(Li = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
 # Introduction
+
+“So tell me about yourself!’’ This seemingly straightforward question in day-to-day interactions is usually met with silence and hesitation. That can no longer be the case for the 1.67 trillion online dating industry, which has grown exponentially in popularity over the last decade. The dating apps, such as OkCupid and Coffee Meets Bagel, are designed to help the singles ‘get to know’ other people for short or long-term romantic relationships. In order to be popular and memorable, users usually have to write a short introduction to advertise themselves. Such activity could be regarded as self-marketing. As the users of dating apps come from diverse backgrounds, we are interested in how users from distinct backgrounds take different approaches to make themselves more memorable. Moreover, we design the framework of scoring users’ self-introduction and algorithm for providing writing tips (such as words for being memorable). Although our project is still preliminary, it has gained a lot of interest among our friends who struggle to find a date online. Also, our methods and analysis have the potential to be adopted by the dating website to improve the users’ experience and better achieve their mission as matchmakers. 
 
 # Literature Review
 
@@ -38,9 +52,58 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 # Analysis & Results
 
+## Exploratory Data Analysis
+
+### Descriptive Statistics
+
+```{r descr-stats-demo, echo=FALSE, cache=TRUE}
+original_data = read_csv(here("Data", "final_okcupid.csv"))
+skim_list = original_data %>% select(-c(dbscan_cluster)) %>% skim() %>% partition()
+
+skim_list$numeric %>% select(-hist) %>% mutate_if(is.numeric, round, digits = 2) %>% kable(caption = "Continuous Variables")
+skim_list$character%>% kable(caption = "Other Variables")
+
+original_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot() + labs(title = "Correlation Plot of Demographic Variables")
+```
+
+### Visual Analysis
+
+```{r viz-analysis, echo=FALSE}
+cat_vars = original_data %>% 
+  select(edu, fit, height_group, race_ethnicity) %>% 
+  mutate_all(factor) %>% 
+  pivot_longer(dplyr::everything()) %>% 
+  table() %>% 
+  as_tibble() %>% 
+  ggplot(aes(area = n, fill = value, label = value)) + 
+  geom_treemap() + 
+  geom_treemap_text(color = "white", place = "centre", grow = TRUE) + 
+  facet_wrap(~ name) + theme(legend.position = "none") + 
+  labs(title = "Categorical Variable Distributions")
+
+original_data %>% select(-new_index, -orig_index, -age, -height, -clean_text, -essay9, -dbscan_cluster, -profile_length, -prop_longwords) %>% pivot_longer(-c(flesch, long_words)) %>% ggplot(aes(x = log(flesch + abs(min(flesch)) + 1), y = long_words, color = value)) + geom_point(alpha = 0.3, size = 1) + facet_wrap(~ name) + theme(legend.position = "none") + labs(title = "Flesch score vs. Long words by Variable", x = "Flesch Score (log)", y = "Number of Long Words")
+```
+
+
+### Clusterability
+
 ## Clustering of Demographic Data
 
+### K-means
+
+### AGNES
+
+Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a subset of 2000 observations was used instead.  
+
 ## Text Analysis
+
+### Word2Vec
+
+### Topic Modeling
+
+### DBSCAN
+
+A DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec.
 
 ## Combining Text and Demographic Data
 
@@ -48,7 +111,26 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 # Conclusion
 
+\newpage
 # Appendices
+
+## AGNES Code
+
+```{r code = readLines(knitr::purl(here("Clustering", "advanced_clustering.Rmd"), documentation = 1)), echo = T, eval = F}
+
+```
+
+## DBSCAN Code
+
+```{r code = readLines(knitr::purl(here("Clustering", "dbscan_doc2vec.Rmd"), documentation = 1)), echo = T, eval = F}
+
+```
+
+## Doc2Vec Code
+
+```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Doc2Vec_Modelling.ipynb"))), echo = T, eval = F}
+
+```
 
 \newpage
 # References
