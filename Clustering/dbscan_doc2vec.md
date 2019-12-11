@@ -183,6 +183,10 @@ modal = function(vect, percent = FALSE, only_one = FALSE) {
   modal_val
 }
 
+cluster_significance = function(var, data, clus_var = "cluster") {
+  wilcox.test(as.formula(paste(var, "~", clus_var)), data)$p.value
+}
+
 merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
 ```
 
@@ -192,6 +196,19 @@ merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% gro
 |       1 | 31.99439 | 70.50708 |    11.26785 |  7.239076 |
 
 Mean by Cluster
+
+``` r
+merged_demo_data %>% select(-X1) %>% select_if(is.numeric) %>%  {sapply(names(select(., -cluster)), cluster_significance, data = .)} %>% round(3) %>% enframe() %>% kable(caption = "Wilcox Test P-values")
+```
+
+| name        | value |
+| :---------- | ----: |
+| age         | 0.000 |
+| height      | 0.961 |
+| long\_words | 0.458 |
+| flesch      | 0.002 |
+
+Wilcox Test P-values
 
 ``` r
 merged_demo_data %>% select(-c(X1, education)) %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
