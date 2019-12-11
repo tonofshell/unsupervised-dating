@@ -19,6 +19,7 @@ library(kableExtra)
 library(skimr)
 library(ggcorrplot)
 library(treemapify)
+library(factoextra)
 library(Cairo)
 
 knitr::opts_chunk$set(echo = FALSE, warning=FALSE, error = FALSE, message = FALSE, dev = "cairo_pdf" , dpi = 400, tidy.opts=list(width.cutoff=50), tidy=TRUE)
@@ -54,7 +55,11 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 ## Exploratory Data Analysis
 
+
+
 ### Descriptive Statistics
+
+The majority of the variables included in the demographic data is independent, but some weaker correlations do exist. 
 
 ```{r descr-stats-demo, echo=FALSE, cache=TRUE}
 original_data = read_csv(here("Data", "final_okcupid.csv"))
@@ -63,13 +68,13 @@ skim_list = original_data %>% select(-c(dbscan_cluster)) %>% skim() %>% partitio
 skim_list$numeric %>% select(-hist) %>% mutate_if(is.numeric, round, digits = 2) %>% kable(caption = "Continuous Variables")
 skim_list$character%>% kable(caption = "Other Variables")
 
-original_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot() + labs(title = "Correlation Plot of Demographic Variables")
+original_data %>% select(-c(orig_index, new_index, clean_text, essay9)) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot() + labs(title = "Correlation Plot of Demographic Variables")
 ```
 
 ### Visual Analysis
 
-```{r viz-analysis, echo=FALSE}
-cat_vars = original_data %>% 
+```{r viz-analysis, echo=FALSE, cache=TRUE}
+original_data %>% 
   select(edu, fit, height_group, race_ethnicity) %>% 
   mutate_all(factor) %>% 
   pivot_longer(dplyr::everything()) %>% 
@@ -87,6 +92,12 @@ original_data %>% select(-new_index, -orig_index, -age, -height, -clean_text, -e
 
 ### Clusterability
 
+```{r demo-clusterability, cache=TRUE}
+clusterability = original_data %>% select(-c(new_index, orig_index, clean_text, essay9, dbscan_cluster)) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(2000) %>% scale() %>% get_clust_tendency(n = 10)
+clusterability$plot
+```
+The demographic data is highly clusterable with a Hopkins Statistic of `r round(clusterability$hopkins, 3)` on a random subset of 2,000 observations. Unfortuantely, clusterability could not be determined for the whole dataset due to performance limitations. However, 2,000 observations should be sufficient for determining clusterability. 
+
 ## Clustering of Demographic Data
 
 ### K-means
@@ -103,7 +114,18 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 
 ### DBSCAN
 
-A DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec.
+As we wanted to determine factors behind why a profile might stick out, we decided to use 
+a DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec. As Doc2Vec vectors capture different characteristics about the text, any outliers in these vectors should be profiles that deviate from the norm to some degree. As shown below, these Doc2Vec vectors are highly independent with very few correlations, but also highly clusterable, with a Hopkins Statistic of 0.808.
+
+![DBSCAN Correlation Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/data-1.png)
+
+Using a K-nearest-neighbors distribution plot, we determined that the optimal value for the epsilon neighborhood size of the DBSCAN model was 9. This was determined using 5 nearest neighbors, to match the default minimum number of points in the epsilon region, which we used for the model.
+
+![DBSCAN KNN Distribution Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/dbscan-1.png)
+
+The DBSCAN model identified one cluster, and 108 outliers, accounting for 0.57% of the observations. Using a Wilcox Test, we can determine that the difference in the means between the "typical" profiles and outlier profiles are insignificant for the continuous variables for height and number of long words, but are highly significant for Flesch score and age. Mean age is higher among the outliers by about 4.5 years, while the mean Flesch score of outliers is about 8 points higher. This suggests that the outliers, being older and writing at a more advanced level, might be more educated (or at least trying to appear so) than their "typical" peers.
+
+![DBSCAN Cluster Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/dbscan-2.png)
 
 ## Combining Text and Demographic Data
 
