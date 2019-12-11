@@ -35,9 +35,10 @@ flatten_jupyter = function(path_to_notebook) {
   return(output_path)
 }
 ```
+
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Liu = c("KMeans", "Structural Topic Modeling", "Discussion"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
@@ -207,7 +208,7 @@ Finally, we use `estimateEffect()` function to estimating relationships between 
 
 We observe from the table that the factor "edu_More than HIgh Schoo" is significant at all of the 9 regressions. This means that being more educated is associated with some variations in the topic proportions. Intuitively, this suggests more educated people might want to write certain topics that make them memorized as intelligent and knowledgable. 
 
-We notice 'height_groupshort' is only significant for regression #7. Topic # 7 has high probability words such as " like, also, think, someone", which seems quite ordinary. It's likely the use of 'also' indicates they are disconfident when introducing themselves, which might because they feel they are too short.
+We notice 'height_groupshort' is only significant for regression #7. Topic # 7 has high probability words such as "like, also, think, someone", which seems quite ordinary. It's likely the use of 'also' indicates they are disconfident when introducing themselves, which might because they feel they are too short.
 
 When looking at the coefficients at each regression, we are surprised that in the regression #6, only edu_More than HIgh Schoo" matters for Topic #6's proportions. In comparison, 8 out of the 11 coefficients are significant in the regression #8. Our current understanding is that for topic#8, people with different backgrounds have various ideas of how much to write about it. 
 
