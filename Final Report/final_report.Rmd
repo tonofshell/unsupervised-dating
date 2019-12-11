@@ -20,14 +20,13 @@ library(skimr)
 library(ggcorrplot)
 library(treemapify)
 library(factoextra)
-library(Cairo)
 
 
 
 #set working directory
 #setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating/Final Report')
 
-knitr::opts_chunk$set(echo = FALSE, warning=FALSE, error = FALSE, message = FALSE, dev = "cairo_pdf" , dpi = 400, tidy.opts=list(width.cutoff=50), tidy=TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning=FALSE, error = FALSE, message = FALSE , dpi = 400, tidy.opts=list(width.cutoff=50), tidy=TRUE)
 
 # converts a Jupyter notebook to a regular old Python script
 flatten_jupyter = function(path_to_notebook) {
@@ -60,23 +59,21 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 ## Exploratory Data Analysis
 
-
-
 ### Descriptive Statistics
-
-The majority of the variables included in the demographic data is independent, but some weaker correlations do exist. 
 
 ```{r descr-stats-demo, echo=FALSE, cache=TRUE}
 original_data = read_csv(here("Data", "final_okcupid.csv"))
-skim_list = original_data %>% select(-c(dbscan_cluster)) %>% skim() %>% partition()
+skim_list = original_data %>% select(-c(dbscan_cluster, new_index, orig_index)) %>% skim() %>% partition()
 
 skim_list$numeric %>% select(-hist) %>% mutate_if(is.numeric, round, digits = 2) %>% kable(caption = "Continuous Variables")
 skim_list$character%>% kable(caption = "Other Variables")
 
-original_data %>% select(-c(orig_index, new_index, clean_text, essay9)) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot() + labs(title = "Correlation Plot of Demographic Variables")
+original_data %>% select(-c(orig_index, new_index, clean_text, essay9, dbscan_cluster)) %>% select_if(is.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot() + labs(title = "Correlation Plot of Demographic Variables")
 ```
 
-### Visual Analysis
+The data we used was approximately 60,000 anonymous OkCupid profiles from 2012 that were gathered with consent from users in the San Francisco area [@kim2015okcupid]. This data was downloaded from the GitHub page for @kim2015okcupid, [https://github.com/rudeboybert/JSE_OkCupid](https://github.com/rudeboybert/JSE_OkCupid). The data contains demographic attributes of users that were submitted to their profile, including variables like age, height, race, and education, in addition to a selection of ten short essays that users have written in response to different prompts to display on their profiles. We subsetted this data to `r nrow(original_data)` profiles of men, and generated additional features for the numbers and proportions of long words and Flesch–Kincaid readability scores of the main profile essay. The majority of male users in our sample or white, fit, not-short, and have more than a high school education. The mean reported age is 32 and the mean reported height is 70.5 inches (approximately 5 foot 9 inches).
+
+The majority of the variables included in the demographic data are independent, but some weaker correlations do exist. As expected there are positive correlations between all the features generated from the essay text. Age is also positively correlated with our text-generated features, perhaps suggesting that older people are more educated and write with more complexity. While Flesch scores and the amount of long words are correlated, there do not appear to be any demographic interactions with that relationship.
 
 ```{r viz-analysis, echo=FALSE, cache=TRUE}
 original_data %>% 
@@ -109,7 +106,13 @@ The demographic data is highly clusterable with a Hopkins Statistic of `r round(
 
 ### AGNES
 
-Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a subset of 2000 observations was used instead.  
+Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. 
+
+![NbClust Results](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-3.png)
+
+![AGNES Dendrogram](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-4.png)
+
+![AGNES Cluster Results](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-5.png)
 
 ## Text Analysis
 
@@ -122,7 +125,7 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 As we wanted to determine factors behind why a profile might stick out, we decided to use 
 a DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec. As Doc2Vec vectors capture different characteristics about the text, any outliers in these vectors should be profiles that deviate from the norm to some degree. As shown below, these Doc2Vec vectors are highly independent with very few correlations, but also highly clusterable, with a Hopkins Statistic of 0.808.
 
-![DBSCAN Correlation Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/data-1.png)
+![Doc2Vec Correlation Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/data-1.png)
 
 Using a K-nearest-neighbors distribution plot, we determined that the optimal value for the epsilon neighborhood size of the DBSCAN model was 9. This was determined using 5 nearest neighbors, to match the default minimum number of points in the epsilon region, which we used for the model.
 
@@ -137,8 +140,6 @@ The DBSCAN model identified one cluster, and 108 outliers, accounting for 0.57% 
 
 ## Output
 
-
-
 <img width="30%" src="preference_selection.png"/>
 <img width="30%" src="profile_help.png"/>
 <img width="30%" src="profile_help_fixed.png"/>
@@ -149,7 +150,6 @@ The above three pictures show the protocol of the final product that we have in 
 ## Discussion
 
 The project faces several limitations at this stage. Firstly, without data on the outcome (such as the number of messages), we do not know have a relative measure for the self-introductions' memorabilities. As a result, we don't have the outcomes to train the scoring function with machine learning. Secondly, without follow-up interviews, we cannot measure whether the specific choice of words was aimed at authenticity or matches with an awareness of 'relationshopping' (experienced users use certain phrases fraudulently to hook others). Thirdly, without the users' other profile images, we cannot estimate the effect of a memorable self-introduction on outcomes as the quality of images is a potential moderating variable.
-
 
 # Conclusion
 
