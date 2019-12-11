@@ -55,6 +55,16 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 # Empirical Strategy
 
+This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
+
+Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
+
+Secondly, we use topic modeling (LDA) to visualize the latent topics behind the text. We also compare the differences in topic propotions for different groups and clusters of users.
+
+Thirdly, we use the structural topic modeling to estimate the impact of the demographic variables and humor measure (DBScan on Doc2Vec vectors) on the topic proportions. 
+
+Lastly, we discuss the potential use of our analysis and also acknowledge the challenges and limitations we face at this stage.
+
 # Analysis & Results
 
 ## Exploratory Data Analysis
@@ -103,6 +113,12 @@ The demographic data is highly clusterable with a Hopkins Statistic of `r round(
 ## Clustering of Demographic Data
 
 ### K-means
+
+Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gowler's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
+
+![Kmeans with 3 clusters](Plots/kmeans3.png)
+
+Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric doesn't converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
 
 ### AGNES
 
@@ -213,8 +229,18 @@ The project faces several limitations at this stage. Firstly, without data on th
 
 # Conclusion
 
+In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. Moreover, we feel excited to learn how other teams use UML to address the research problems creatively during the working group and final presentation. This experience greatly arises our interest to study more UML methods in the future.
+
+
+
 \newpage
 # Appendices
+
+## Kmeans Code
+
+```{r code = readLines(knitr::purl(here("Clustering", "Kmeans.Rmd"), documentation = 1)), echo = T, eval = F}
+
+```
 
 ## AGNES Code
 
