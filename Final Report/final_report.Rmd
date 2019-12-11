@@ -106,6 +106,9 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 
 ### Topic Modeling
 
+A topic is defined as a mixture of words where each word has a probability of generating from a topic. The example would be words such as 'books', 'college', 'MOOC' could come from the topic of study. A document is a mixture of topics, where a single document can have covered multiple topics. The example would be that a user talks about topics related to career, study, hobbies, and religion in the self-introduction.
+
+
 ### DBSCAN
 
 A DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec.
@@ -113,9 +116,66 @@ A DBSCAN model was used to detect outliers within a data-set of 50 vectors calcu
 ## Combining Text and Demographic Data
 
 
+### Motivation
+
+So far, we have explored the patterns within the demographic variables using clustering and self-introduction text using LDA. However, in order to quantify whether people of different backgrounds write different topics, we need to model the topic distributions as a function of the metadata (demographic variables and DBScan score). The structural topic modeling (STM) solves the problem as it allows researchers to discover topics and estimate their relationships to document metadata (Roberts et al. 2016). Similar to the Latent Dirichlet Allocation model, STM also assumes there are some latent document-topic and topic-word distributions generating documents. However, STM differs from LDA as it handles the document-associated metadata. As a result, STM allows us to predict how topical prevalence (proportion of a topic across multiple documents) or topic content (the topic composition of terms) would shift when the metadata changes. 
+
+### Estimation
+
+We use the `stm` R package to estimate the model, summarize results, and visualize with the word cloud and topic network. In our project, we are interested in the topical prevalence. So the response ( dependent variable) is the proportion of a topic across multiple self-introductions. The metadata (independent variables) is 'fit', 'education', 'height_group', 'race_ethnicity', and 'dbscan_cluster'. 
+
+In the preparation step, we use `textProcessor` function to stem the words and remove stopwords. Then we use `prepDocuments` function to structure and index the data. As the low-frequency words are probably the more memorable ones, we set the 'lower.thresh' option to 0 to keep all words. 
+
+Then we estimate the model for the topic prevalence using 9 topic models. During the estimation, the proportions of 9 topics are regressed on the metadata. There are many ways to visualize the results. The following plot shows the expected topic proportions 
+
+![Top Topic](Plots/toptopic.jpeg)
+
+The proportions across 9 topics do not have a large gap, as the most common topic is 0.14 and the least common one is 0.10. We observe that the top three topics seem to consist of common nouns and verbs that are not very memorable. So we further explore the most frequent words in the model for both the most common topics (#5, #4, and #7) and the least common topics (#1, #2, and #9). 
+
+![Most Common Topics](Plots/top3topic.jpeg) ![Least Common Topics](Plots/bottom3topic.jpeg)
+
+Although it's hard to tell the quantified difference, we find the words in the least common topics are a little more memorable, such as 'intelligent' and 'dance'. 
+
+When we plot the histograms of topics, we find that most of the topics consist of around 10% of the topics of the documents. Interestingly, the histograms of topics #6 and #8 seem to have a bell-curve shape, which suggests there are many documents have higher or lower proportions of 10%. 
+
+![Most Common Topics](Plots/hist.jpeg) 
+
+In particular, we plot these two plots on the same line. Topic #6 is about 'friend' and 'live' and topic #8 is about 'year' and 'get'. So our interpretation is that topic #6 s about casually looking for friends while topic #8 is about setting a goal of getting something new in the year. As a result, although most users talk about them explicitly, some talk them more and some use other expressions.
+
+![Comparison of Topics 6 and 8](Plots/comparison.jpeg) 
+
+Also, `topicCorr()` calculates correlations between topics, where positive correlations mean that both topics are likely to be discussed within a document.
+
+![Topic Networks](Plots/network.jpeg) 
+
+For the OkCupid beginners, it will be helpful if they could learn what topics are they expected to write together. However, this would only make an ordinary self-introduction. To make it really memorable and stand out, they should consider writing a few topics that are unique and quirky.
+
+
+### Evaluation
+
+To further understand whether the topics make sense, we use the topicQuality() function to plot the semantic coherence and exclusivity values associated with each topic.
+
+![Topic Quality](Plots/topicQuality.jpeg) 
+
+The results seem to highly correlated with the topic proportions, as topics with higher proportions also have higher semantic coherence and exclusivity values.
+
+### Effect
+Finally, we use `estimateEffect()` function to estimating relationships between metadata and topic prevalence. There are 9 regressions under the hood and 12 coefficients associated with each. To effectively analyze the results with 108 coefficients, we compile them into a table by indicating the coefficients which are statistically significant at the level of 5%. These significant coefficients suggest that we can reject the null hypothesis and accept the alternative hypothesis that a relationship exists between the topic prevalence and metadata.
+
+![Significant Coefficients](Plots/Covariates.png) 
+
+We observe from the table that the factor "edu_More than HIgh Schoo" is significant at all of the 9 regressions. This means that being more educated is associated with some variations in the topic proportions. Intuitively, this suggests more educated people might want to write certain topics that make them memorized as intelligent and knowledgable. 
+
+We notice 'height_groupshort' is only significant for regression #7. Topic # 7 has high probability words such as " like, also, think, someone", which seems quite ordinary. It's likely the use of 'also' indicates they are disconfident when introducing themselves, which might because they feel they are too short.
+
+When looking at the coefficients at each regression, we are surprised that in the regression #6, only edu_More than HIgh Schoo" matters for Topic #6's proportions. In comparison, 8 out of the 11 coefficients are significant in the regression #8. Our current understanding is that for topic#8, people with different backgrounds have various ideas of how much to write about it. 
+
+In summary, we get some interesting results during our first time using structural topic modeling. Although we are still learning it, we believe it has great potential to undercover the underlying relationships between metadata and topic prevalence. Such relationships would be useful for OkCupid to provide users with writing tips to make their self-introduction more memorable.
+
+
+
+
 ## Output
-
-
 
 <img width="30%" src="preference_selection.png"/>
 <img width="30%" src="profile_help.png"/>
@@ -152,5 +212,11 @@ The project faces several limitations at this stage. Firstly, without data on th
 
 ```
 
+
+## Structural topic modeling Code
+
+```{r code = readLines(knitr::purl(here("Topic Models", "stm-demo+dbscan.RMD"), documentation = 1)), echo = T, eval = F}
+
+```
 \newpage
 # References
