@@ -119,7 +119,7 @@ dev.off()
 
 
 
-```{r}
+```{r word-cloud}
 cloud(Fit, topic = 1)
 ```
 
