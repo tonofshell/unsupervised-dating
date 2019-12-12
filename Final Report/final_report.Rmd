@@ -58,7 +58,7 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
 
-![Venn Diagram of Methods](methods.png)
+![Venn Diagram of Methods](Plots/methods.png)
 
 Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
 
@@ -111,21 +111,21 @@ original_data %>% select(-new_index, -orig_index, -age, -height, -clean_text, -e
 clusterability = original_data %>% select(-c(new_index, orig_index, clean_text, essay9, dbscan_cluster)) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(2000) %>% scale() %>% get_clust_tendency(n = 10)
 clusterability$plot
 ```
-The demographic data is highly clusterable with a Hopkins Statistic of `r round(clusterability$hopkins, 3)` on a random subset of 2,000 observations. Unfortuantely, clusterability could not be determined for the whole dataset due to performance limitations. However, 2,000 observations should be sufficient for determining clusterability. 
+The demographic data is highly clusterable with a Hopkins Statistic of `r round(clusterability$hopkins, 3)` on a random subset of 2,000 observations. The ordered dissimilarity image not only provides visual evidence of this clusterability, but also gives some indication of how many clusters may be in this data. Unfortuantely, clusterability could not be determined for the whole dataset due to performance limitations. However, 2,000 observations should be sufficient for determining clusterability. 
 
 ## Clustering of Demographic Data
 
 ### K-means
 
-Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gowler's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
+Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gower's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
 
 ![Kmeans with 3 clusters](Plots/kmeans3.png)
 
-Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric doesn't converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
+Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric does not converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
 
 ### AGNES
 
-Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches.
+Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches. These AGNES clusters can be used to reduce demensionality among a user's demographics so it can be more effectively used in further analyses. The dendrogram and cluster plots were generated using the `factoextra` package in R.
 
 ![NbClust Results](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-3.png)
 
@@ -189,7 +189,7 @@ In particular, we plot these two plots on the same line. Topic #6 is about 'frie
 
 Also, `topicCorr()` calculates correlations between topics, where positive correlations mean that both topics are likely to be discussed within a document.
 
-<!--![Topic Networks](Plots/network.jpeg)-->
+![Topic Networks](Plots/network.jpeg)
 
 For the OkCupid beginners, it will be helpful if they could learn what topics are they expected to write together. However, this would only make an ordinary self-introduction. To make it really memorable and stand out, they should consider writing a few topics that are unique and quirky.
 
@@ -267,6 +267,12 @@ Lastly, we want to express our excitement for learning these useful tools from t
 ## Doc2Vec Code
 
 ```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Doc2Vec_Modelling.ipynb"))), echo = T, eval = F}
+
+```
+
+## Data Filtering Code
+
+```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Data_Filter.ipynb"))), echo = T, eval = F}
 
 ```
 
