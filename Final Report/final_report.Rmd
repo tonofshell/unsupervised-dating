@@ -40,7 +40,7 @@ flatten_jupyter = function(path_to_notebook) {
 
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Overall Strategy", "Data Cleaning", "Topic Modeling Selection & Doc2Vec Model"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
