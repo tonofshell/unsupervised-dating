@@ -1,7 +1,7 @@
 ---
-title: "Final Report"
+title: "Self-marketing Approaches - An Analysis of Online Dating"
 author: "Li Liu, Abhishek Pandit, Adam Shelton"
-date: "12/7/2019"
+date: "12/11/2019"
 header-includes:
     - \usepackage{setspace}\doublespacing
 output: 
@@ -245,6 +245,8 @@ Lastly, we want to express our excitement for learning these useful tools from t
 
 \newpage
 # Appendices
+
+Below is all the source code used for this project, which is available on the GitHub repo for this project: [https://github.com/tonofshell/unsupervised-dating](https://github.com/tonofshell/unsupervised-dating)
 
 ## Kmeans Code
 
