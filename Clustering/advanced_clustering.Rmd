@@ -26,225 +26,15 @@ library(doParallel)
 knitr::opts_chunk$set(echo = TRUE, fig.height = 6, fig.width = 8, dpi = 400)
 
 set.seed(60615)
-
-# drops variables in a dataset with a certain percentage or number of missing values (a lower value means less missing values are allowed before a variable is dropped)
-drop_high_na = function(data_set, cutoff = 0.5, rows = FALSE) {
-  library(tidyverse)
-  if (cutoff < 0) {
-    stop("Cutoff cannot be less than zero!")
-  }
-  # returns a logical value if a row/column at a specifed index should be dropped
-  drop_index = function(index, ds) {
-    items = NULL
-    if (rows) {
-      items = ds[index, ] %>% unlist()
-    } else {
-      items = ds[, index] %>% unlist()
-    }
-    num_nas = items %>% is.na() %>% sum()
-    if (cutoff < 1) {
-      perc_nas = num_nas / length(items)
-      return(perc_nas < cutoff)
-    } else {
-      return(num_nas < cutoff)
-    }
-    return(NULL)
-  }
-  
-  if (rows) {
-    keep_row = sapply(1:nrow(data_set), drop_index, data_set)
-    return(data_set[keep_row, ])
-  }
-  keep_col = sapply(1:ncol(data_set), drop_index, data_set)
-  return(data_set[ ,keep_col])
-}
-
-# Uses knn imputation from the caret package to impute missing values that match the format of surrounding variables
-full_imputation = function(data_set, accuracy = FALSE) {
-  packages_loaded = require(caret) & require(dplyr)
-  if (!packages_loaded) {
-    stop("The caret and dplyr packages are necessary for this function!")
-  }
-
-  altered_ds = mutate_all(data_set, as_numeric)
-  imputed_model = preProcess(altered_ds, "knnImpute") 
-  imputed_ds = imputed_model %>% predict(altered_ds) %>% unscale(altered_ds)
-  #message(confusionMatrix(imputed_model))
-  message(paste("Imputation accuracy with known values: ", imputation_performance(altered_ds, imputed_ds) %>% (function(x) x * 100) %>% round(1), "%", sep = ""))
-    
-  replace_var_nas = function(var_name, ds) {
-    na_indices = altered_ds %>% select(var_name) %>% {which(is.na(.))}
-    if (FALSE %in% is.wholenumber(ds[[var_name]])) {
-      ds[[var_name]][na_indices] = imputed_ds[[var_name]][na_indices]
-    } else {
-      ds[[var_name]][na_indices] = round(imputed_ds[[var_name]][na_indices])
-    }
-    ds[[var_name]] = switch_other(typeof(data_set[[var_name]]),
-                             "character" = factor(data_set[[var_name]]) %>% levels() %>% .[ds[[var_name]]],
-                             "factor" = factor(data_set[[var_name]]) %>% levels() %>% .[ds[[var_name]]] %>% factor(),
-                             "logical" = as.logical(ds[[var_name]]),
-                             other = ds[[var_name]]
-    )
-    
-    return(ds[[var_name]])
-  }
-  return(sapply(names(altered_ds), replace_var_nas, altered_ds) %>% as_tibble())
-}
-
-imputation_performance = function(original, imputed, accuracy = TRUE) {
-  if (nrow(original) != nrow(imputed) | ncol(original) != ncol(imputed)) {
-    stop("Dimensions of objects must match!")
-  }
-  tune_grid = expand.grid(row_index = 1:nrow(original), col_index = 1:ncol(original))
-  get_val = function(grid_index, acc = TRUE) {
-    indices = unlist(tune_grid[grid_index, ])
-    original_val = unlist(original[indices[1], indices[2]])
-    if (is.na(original_val)) {
-      return(original_val)
-    }
-    if (acc) {
-      return(original_val == unlist(imputed[indices[1], indices[2]]))
-    }
-    return(abs(as.numeric(original_val) - as.numeric(unlist(imputed[indices[1], indices[2]]))))
-  }
-  if (accuracy) {
-    return(sapply(1:nrow(tune_grid), get_val) %>% as.logical() %>% (function(x) sum(x, na.rm = TRUE) / sum(!is.na(x))))
-  }
-  return(sapply(1:nrow(tune_grid), get_val, FALSE) %>% as.numeric() %>% (function(x) sum(x, na.rm = TRUE) / sum(!is.na(x))))
-}
-
-# Coerces vectors to numeric vectors, for character vectors that can not be coerced directly to numeric, the vector is coerced to a factor then a numeric vector
-as_numeric = function(x) {
-  num_nas = sum(is.na(x))
-  x_num = as.numeric(x)
-  if (sum(is.na(x_num)) > num_nas) {
-    x_num = as.numeric(factor(x))
-  }
-  return(x_num)
-}
-
-# a method for reversing the scaling process performed by scale(), methods automatically call the right function for the right input class, when the generic method is used. This allows unscale() to work for numeric vectors, data frames, and tibbles
-
-unscale = function(scaled, original) {
-  UseMethod("unscale")
-}
-
-unscale.numeric = function(scaled, original) {
-  if (length(scaled) != length(original)) {
-    stop("Objects must match each other in format!")
-  }
-  orig_mean = mean(original, na.rm = TRUE)
-  orig_sd = sd(original, na.rm = TRUE)
-  return(scaled * orig_sd + orig_mean)
-}
-
-unscale.data.frame = function(scaled, original) {
-  if (!identical(names(scaled), names(original))) {
-    stop("Objects must match each other in format!")
-  }
-  us_col = function(var_index) {
-    return(unscale.numeric(unlist(scaled[, var_index]), unlist(original[, var_index])) )
-  }
-  unscaled_df = as.data.frame(lapply(1:ncol(scaled), us_col))
-  names(unscaled_df) = names(scaled)
-  return(unscaled_df)
-}
-
-unscale.tbl_df = function(scaled, original) {
-  return(as_tibble(unscale.data.frame(scaled, original)))
-}
-
-# from the helppage for is.integer()
-is.wholenumber = function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
-
-# a switch function that catches all 'other' results of the expression
-switch_other = function(EXPR, ..., other = NULL) {
-  sw_result = switch(EXPR, ...)
-  if (is.null(sw_result)) {
-    return(other)
-  }
-  return(sw_result)
-}
 ```
 
 ## Import Data
 ```{r data}
-original_data = read_csv(here("Data", "compressed_okcupid.csv"))
+original_data = read_csv(here("Data", "final_okcupid.csv")) %>% select(-c("new_index", "orig_index", "clean_text", "essay9", "long_words", "flesch",  "dbscan_cluster", "profile_length", "prop_longwords" ))
 
-new_features = read_csv(here("Data", "newfeatures.csv")) %>% select(-X1) %>% as.matrix() %>% scale()
-
-cluster_data = original_data #%>% select(c("age", "body_type", "diet", "drinks", "drugs", "education", "ethnicity", "job", "orientation", "religion", "sex", "smokes", "status", "sign_import", "dogs", "cats", "kids", "multi_ling", "days_since_online", "distance")) %>% select(-c(cats, dogs)) %>%  mutate_if(is.character, factor) %>% filter(distance < 50) %>% select(-distance) 
+names(original_data)
 ```
 
-<!--
-## Imputing Data
-```{r imputing, eval=FALSE, error=TRUE, cache=TRUE, include=FALSE}
-if ("full_imputed.rds" %in% list.files(here("Data"))) {
-  imputed = readRDS(here("Data", "full_imputed.rds"))
-} else {
-  setup_cl = function(seed = round(Sys.time())) {
-  require(parallel)
-  if (exists("cl")) {
-    print("Stopping existing cluster")
-    try(parallel::stopCluster(cl))
-  }
-  assign("cl", parallel::makeCluster(parallel::detectCores() - 1, outfile = "out.txt"), envir = globalenv())
-  RNGkind("L'Ecuyer-CMRG")
-  print(paste("Using", as.numeric(seed), "as parallel RNG seed"))
-  clusterSetRNGStream(cl, seed)
-}
-setup_cl(60615)
-registerDoParallel(cl)
-  tic()
-  imputed = cluster_data %>% as.data.frame() %>% missForest(parallelize = "forests")
-  toc()
-  saveRDS(imputed, here("Data", "full_imputed.rds"))  
-}
-imputed_data = imputed$ximp
-imputed$OOBerror %>% kable()
-```
-
-# Take 1
-
-## PCA
-```{r pca-1, eval=FALSE, include=FALSE}
-PCA(new_features, graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
-ggsave2(here("Clustering", "pca.png"), height = 7, width = 11)
-```
-
-
-
-## CLARA
-```{r clara, eval=FALSE, include=FALSE}
-#nb <- NbClust(new_features, distance = "euclidean", min.nc = 2, max.nc = 10, method = "complete", index ="all")
-
-build_clara = function(x) {
-  clara(new_features, x)
-}
-
-clara_mods = lapply(1:10, build_clara)
-
-clara_viz = lapply(clara_mods[2:10], fviz_cluster, labelsize = 0)
-plot_grid(plotlist = clara_viz)
-
-ggsave2(here("Clustering", "clara_all.png"), height = 7, width = 11)
-
-clara_viz[[2]]
-ggsave2(here("Clustering", "clara_three.png"), height = 7, width = 11)
-
-```
-
-## DBSCAN
-```{r dbscan, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-kNNdistplot(new_features, k = ncol(new_features) - 1)
-abline(h= 0.5, col = "red", lty=2)
-test = dbscan(new_features, 0.5)
-
-fviz_cluster(test, new_features, labelsize = 0)
-```
-
-# Take 2
--->
 ## Descriptive Statistics
 ```{r descr-stats, cache=TRUE, fig.height = 8, fig.width = 11,}
 skim_list = original_data %>% skim() %>% partition()
@@ -252,9 +42,9 @@ skim_list = original_data %>% skim() %>% partition()
 skim_list$numeric %>% kable()
 skim_list$character%>% kable()
 
-original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
+original_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% cor(use = "pairwise.complete.obs") %>% ggcorrplot()
 
-clusterability = original_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
+clusterability = original_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(5000) %>% get_clust_tendency(n = 50)
 clusterability$hopkins_stat
 clusterability$plot
 ```
@@ -262,39 +52,20 @@ clusterability$plot
 
 ## PCA
 ```{r pca, cache=TRUE}
-sampled_data = original_data %>% sample_n(2000) 
-sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
+original_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) %>% PCA(graph = FALSE) %>% fviz_pca_biplot(label = "var", col.var = "red", col.ind = "grey")
 ggsave2(here("Clustering", "pca_v2.png"), height = 7, width = 11)
 ```
 
-<!--## PAM
-```{r pam, eval=FALSE, include=FALSE}
-gower_data = original_data %>% mutate_all(factor) %>% daisy(metric = "gower")
-
-#gower_data %>% fviz_dist()
-
-sil_width <- c(NA)
-for(i in 2:15){  
-  pam_fit <- pam(gower_data, diss = TRUE, k = i)  
-  sil_width[i] <- pam_fit$silinfo$avg.width  
-}
-
-plot(1:8, sil_width,
-     xlab = "Number of clusters",
-     ylab = "Silhouette Width")
-lines(1:8, sil_width)
-```
--->
-
 ## Agglomerative Nesting
-```{r agg-nest, error=TRUE}
-agnes_data = sampled_data %>% select(-essay0, -essay9) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
+```{r agg-nest, error=TRUE, cache=TRUE}
+sampled_data = original_data %>% sample_n(5000) 
+agnes_data = sampled_data %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% mutate_all(scale) 
 agnes_diss = agnes_data %>% as.matrix() %>% daisy(metric = "gower")
 nb_results = NbClust(data = agnes_data, diss = agnes_diss, distance = NULL, min.nc = 2, max.nc = 10, method = "ward.D2")
 
 fviz_nbclust(nb_results)
 
-agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 3, hc_func = "agnes", hc_method = "ward.D2")
+agnes_mod = agnes_diss %>% hcut(isdiss = TRUE, k = 2, hc_func = "agnes", hc_method = "ward.D2")
 fviz_dend(agnes_mod)
 sampled_data$cluster = agnes_mod$cluster
 fviz_cluster(agnes_mod, data = agnes_diss, labelsize = 0)
@@ -302,4 +73,33 @@ fviz_cluster(agnes_mod, data = agnes_diss, labelsize = 0)
 saveRDS(sampled_data, here("Data", "Results", "agnes_results.rds"))
 write_csv(sampled_data, here("Data", "Results", "agnes_results.csv"))
 ```
+
+### Cluster Interpretation
+```{r clust-inter}
+modal = function(vect, percent = FALSE, only_one = FALSE) {
+  library(tidyverse)
+  modal_val = vect %>% unlist() %>% table() %>% .[. == max(.)] %>% names()
+  if (only_one) {
+    modal_val = modal_val[1]
+  }
+  if (percent) {
+    return(vect %>% unlist() %>% .[. == modal_val] %>% (function(x) length(x) / length(vect)))
+    }
+  modal_val
+}
+
+cluster_significance = function(var, data, clus_var = "cluster") {
+  wilcox.test(as.formula(paste(var, "~", clus_var)), data)$p.value
+}
+
+sampled_data %>% select_if(is.numeric) %>% group_by(cluster) %>% summarise_all(mean) %>% kable(caption = "Mean by Cluster")
+
+sampled_data %>% select_if(is.numeric) %>%  {sapply(names(select(., -cluster)), cluster_significance, data = .)} %>% round(3) %>% enframe() %>% kable(caption = "Wilcox Test P-values")
+
+sampled_data %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(sd) %>% kable(caption = "Standard Deviation by Cluster")
+
+sampled_data %>% select_if(is.numeric) %>% group_by(cluster) %>% group_by(cluster) %>% summarise_all(median) %>% kable(caption = "Median by Cluster")
+
+sampled_data %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, only_one = TRUE) %>% kable(caption = "Mode by Cluster")
+sampled_data %>% mutate(cluster = factor(cluster)) %>% select_if((function(x) !is.numeric(x))) %>% group_by(cluster) %>% summarise_all(modal, percent = TRUE, only_one = TRUE) %>% mutate_if(is.numeric, round, 3) %>% kable(caption = "Mode by Cluster")
 

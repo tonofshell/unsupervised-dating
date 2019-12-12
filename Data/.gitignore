@@ -3,3 +3,4 @@ profiles.csv.zip
 full_ok_cupid_cleaned.csv
 full_ok_cupid_cleaned.rds
 full_ok_cupid_cleaned.zip
+!get_data.R
