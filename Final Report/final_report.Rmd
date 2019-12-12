@@ -58,7 +58,7 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
 
-![Venn Diagram of Methods](methods.png)
+![Venn Diagram of Methods](Plots/methods.png)
 
 Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
 
@@ -111,7 +111,7 @@ original_data %>% select(-new_index, -orig_index, -age, -height, -clean_text, -e
 clusterability = original_data %>% select(-c(new_index, orig_index, clean_text, essay9, dbscan_cluster)) %>% mutate_if(is.character, factor) %>% mutate_all(as.numeric) %>% sample_n(2000) %>% scale() %>% get_clust_tendency(n = 10)
 clusterability$plot
 ```
-The demographic data is highly clusterable with a Hopkins Statistic of `r round(clusterability$hopkins, 3)` on a random subset of 2,000 observations. Unfortuantely, clusterability could not be determined for the whole dataset due to performance limitations. However, 2,000 observations should be sufficient for determining clusterability. 
+The demographic data is highly clusterable with a Hopkins Statistic of `r round(clusterability$hopkins, 3)` on a random subset of 2,000 observations. The ordered dissimilarity image not only provides visual evidence of this clusterability, but also gives some indication of how many clusters may be in this data. Unfortuantely, clusterability could not be determined for the whole dataset due to performance limitations. However, 2,000 observations should be sufficient for determining clusterability. 
 
 ## Clustering of Demographic Data
 
@@ -125,7 +125,7 @@ Then we find the optimal number of clusters by comparing the metric of average s
 
 ### AGNES
 
-Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches. The dendrogram and cluster plots were generated using the `factoextra` package in R.
+Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches. These AGNES clusters can be used to reduce demensionality among a user's demographics so it can be more effectively used in further analyses. The dendrogram and cluster plots were generated using the `factoextra` package in R.
 
 ![NbClust Results](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-3.png)
 
