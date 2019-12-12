@@ -26,9 +26,9 @@ library(stmCorrViz)
 
 ## Read in data
 ```{r data, echo=FALSE}
-setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating')
+setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating/Data')
 #cleaned okcupid data
-data <- read_csv(here("Data", "final_okcupid.csv"))
+data <- read_csv("final_okcupid.csv")
 
 #data <- sample_n(essay, 100)
 data <- data[c('clean_text', 'fit', 'edu', 'height_group', 'race_ethnicity', 'dbscan_cluster')]
@@ -118,12 +118,18 @@ dev.off()
 ```
 
 
+
+```{r}
+cloud(Fit, topic = 1)
+```
+
 ## Word cloud display 
 ```{r cloud}
 for (i in seq(1:9)){
-    #name <- paste('topic', str(i), '.jpg', sep='')
-    #jpeg(name, width = 350, height = "350")
-    cloud(Fit, topic = i, scale = c(4,0.2) )}
+    name <- paste('topic', str(i), '.jpg', sep='')
+    jpeg(name)
+    cloud(Fit, topic = i, scale = c(4,0.2) )
+    dev.off}
 ```
 
 ## Network
