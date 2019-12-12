@@ -1,5 +1,6 @@
 ---
-title: "Self-marketing Approaches - An Analysis of Online Dating"
+title: "Self-marketing Approaches"
+subtitle: "An Analysis of Online Dating"
 author: "Li Liu, Abhishek Pandit, Adam Shelton"
 date: "12/11/2019"
 header-includes:
