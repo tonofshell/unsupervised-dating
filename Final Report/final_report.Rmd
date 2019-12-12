@@ -58,6 +58,8 @@ This could be applied to understand online dating. Let us imagine your future ma
 
 This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
 
+![Venn Diagram of Methods](methods.png)
+
 Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
 
 Secondly, we use topic modeling (LDA) to visualize the latent topics behind the text. We also compare the differences in topic propotions for different groups and clusters of users.
