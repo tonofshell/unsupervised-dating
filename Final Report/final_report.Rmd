@@ -35,9 +35,10 @@ flatten_jupyter = function(path_to_notebook) {
   return(output_path)
 }
 ```
+
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Liu = c("Item 1", "Item 2", "Item 3"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
@@ -54,6 +55,16 @@ Potentially, we will also use some marketing theories to understand our findings
 This could be applied to understand online dating. Let us imagine your future mate uses the filter to narrow down the consideration sets. He/She might still face many similar choices with high matching scores to choose from. If you want to stand out from the pool, you must make yourself memorable by highlighting the uniqueness. Thus, one possible idea in this project is to explore and understand how users could increase their brand awareness and differentiate themselves in their segments
 
 # Empirical Strategy
+
+This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
+
+Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
+
+Secondly, we use topic modeling (LDA) to visualize the latent topics behind the text. We also compare the differences in topic propotions for different groups and clusters of users.
+
+Thirdly, we use the structural topic modeling to estimate the impact of the demographic variables and humor measure (DBScan on Doc2Vec vectors) on the topic proportions. 
+
+Lastly, we discuss the potential use of our analysis and also acknowledge the challenges and limitations we face at this stage.
 
 # Analysis & Results
 
@@ -104,6 +115,12 @@ The demographic data is highly clusterable with a Hopkins Statistic of `r round(
 
 ### K-means
 
+Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gowler's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
+
+![Kmeans with 3 clusters](Plots/kmeans3.png)
+
+Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric doesn't converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
+
 ### AGNES
 
 Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches.
@@ -120,6 +137,9 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 
 ### Topic Modeling
 
+A topic is defined as a mixture of words where each word has a probability of generating from a topic. The example would be words such as 'books', 'college', 'MOOC' could come from the topic of study. A document is a mixture of topics, where a single document can have covered multiple topics. The example would be that a user talks about topics related to career, study, hobbies, and religion in the self-introduction.
+
+
 ### DBSCAN
 
 As we wanted to determine factors behind why a profile might stick out, we decided to use 
@@ -135,7 +155,64 @@ The DBSCAN model identified one cluster, and 108 outliers, accounting for 0.57% 
 
 ![DBSCAN Cluster Plot](../Clustering/dbscan_doc2vec_files/figure-gfm/dbscan-2.png)
 
-## Combining Text and Demographic Data
+
+
+## Structural Topic Modeling
+
+### Motivation
+
+So far, we have explored the patterns within the demographic variables using clustering and self-introduction text using LDA. However, in order to quantify whether people of different backgrounds write different topics, we need to model the topic distributions as a function of the metadata (demographic variables and DBScan score). The structural topic modeling (STM) solves the problem as it allows us to estimate the relationships between topic proportions and document metadata. Similar to the Latent Dirichlet Allocation model, STM also assumes there are some latent document-topic and topic-word distributions generating documents. However, STM differs from LDA as it handles the document-associated metadata. As a result, STM allows us to predict how topical prevalence (proportion of a topic across multiple documents) or topic content (the topic composition of terms) would shift when the metadata changes. 
+
+### Estimation
+
+We use the `stm` R package to estimate the model, summarize results, and visualize with the word cloud and topic network. In our project, we are interested in the topical prevalence. So the response (dependent variable) is the proportion of a topic across multiple self-introductions. The metadata (independent variables) is 'fit', 'education', 'height_group', 'race_ethnicity', and 'dbscan_cluster'. 
+
+In the preparation step, we use `textProcessor` function to stem the words and remove stopwords. Then we use `prepDocuments` function to structure and index the data. As the low-frequency words are probably the more memorable ones, we set the 'lower.thresh' option to 0 to keep all words. 
+
+Then we estimate the model for the topic prevalence using 9 topic models. During the estimation, the proportions of 9 topics are regressed on the metadata. There are many ways to visualize the results. The following plot shows the expected topic proportions 
+
+![Top Topic](Plots/toptopic.jpeg)
+
+The proportions across 9 topics do not have a large gap, as the most common topic is 0.14 and the least common one is 0.10. We observe that the top three topics seem to consist of common nouns and verbs that are not very memorable. So we further explore the most frequent words in the model for both the most common topics (#5, #4, and #7) and the least common topics (#1, #2, and #9). 
+
+![Most Common Topics](Plots/top3topic.jpeg) ![Least Common Topics](Plots/bottom3topic.jpeg)
+
+Although it's hard to tell the quantified difference, we find the words in the least common topics are a little more memorable, such as 'intelligent' and 'dance'. 
+
+When we plot the histograms of topics, we find that most of the topics consist of around 10% of the topics of the documents. Interestingly, the histograms of topics #6 and #8 seem to have a bell-curve shape, which suggests there are many documents have higher or lower proportions of 10%. 
+![Most Common Topics](Plots/hist.jpeg) 
+
+In particular, we plot these two plots on the same line. Topic #6 is about 'friend' and 'live' and topic #8 is about 'year' and 'get'. So our interpretation is that topic #6 s about casually looking for friends while topic #8 is about setting a goal of getting something new in the year. As a result, although most users talk about them explicitly, some talk them more and some use other expressions.
+![Comparison of Topics 6 and 8](Plots/comparison.jpeg) 
+
+Also, `topicCorr()` calculates correlations between topics, where positive correlations mean that both topics are likely to be discussed within a document.
+
+![Topic Networks](Plots/network.jpeg) 
+
+For the OkCupid beginners, it will be helpful if they could learn what topics are they expected to write together. However, this would only make an ordinary self-introduction. To make it really memorable and stand out, they should consider writing a few topics that are unique and quirky.
+
+
+### Evaluation
+
+To further understand whether the topics make sense, we use the topicQuality() function to plot the semantic coherence and exclusivity values associated with each topic.
+
+![Topic Quality](Plots/topicQuality.jpeg) 
+
+The results seem to highly correlated with the topic proportions, as topics with higher proportions also have higher semantic coherence and exclusivity values.
+
+### Effect
+
+Finally, we use `estimateEffect()` function to estimating relationships between metadata and topic prevalence. There are 9 regressions under the hood and 12 coefficients associated with each. To effectively analyze the results with 108 coefficients, we compile them into a table by indicating the coefficients which are statistically significant at the level of 5%. These significant coefficients suggest that we can reject the null hypothesis and accept the alternative hypothesis that a relationship exists between the topic prevalence and metadata.
+
+![Significant Coefficients](Plots/Covariates.png) 
+
+We observe from the table that the factor "edu_More than HIgh Schoo" is significant at all of the 9 regressions. This means that being more educated is associated with some variations in the topic proportions. Intuitively, this suggests more educated people might want to write certain topics that make them memorized as intelligent and knowledgable. 
+
+We notice 'height_groupshort' is only significant for regression #7. Topic # 7 has high probability words such as "like, also, think, someone", which seems quite ordinary. It's likely the use of 'also' indicates they are disconfident when introducing themselves, which might because they feel they are too short.
+
+When looking at the coefficients at each regression, we are surprised that in the regression #6, only edu_More than HIgh Schoo" matters for Topic #6's proportions. In comparison, 8 out of the 11 coefficients are significant in the regression #8. Our current understanding is that for topic#8, people with different backgrounds have various ideas of how much to write about it. 
+
+In summary, we get some interesting results during our first time using structural topic modeling. Although we are still learning it, we believe it has great potential to undercover the underlying relationships between metadata and topic prevalence. Such relationships would be useful for OkCupid to provide users with writing tips to make their self-introduction more memorable.
 
 
 ## Output
@@ -149,12 +226,28 @@ The above three pictures show the protocol of the final product that we have in 
 
 ## Discussion
 
-The project faces several limitations at this stage. Firstly, without data on the outcome (such as the number of messages), we do not know have a relative measure for the self-introductions' memorabilities. As a result, we don't have the outcomes to train the scoring function with machine learning. Secondly, without follow-up interviews, we cannot measure whether the specific choice of words was aimed at authenticity or matches with an awareness of 'relationshopping' (experienced users use certain phrases fraudulently to hook others). Thirdly, without the users' other profile images, we cannot estimate the effect of a memorable self-introduction on outcomes as the quality of images is a potential moderating variable.
+The data of this project has several limitations at this stage. Firstly, without data on the outcome (such as the number of messages), we do not know have a relative measure for the self-introductions' memorabilities. As a result, we don't have the outcomes to train the scoring function with machine learning. Secondly, without follow-up interviews, we cannot measure whether the specific choice of words was aimed at authenticity or matches with an awareness of 'relationshopping' (experienced users use certain phrases fraudulently to hook others). Thirdly, without the users' other profile images, we cannot estimate the effect of a memorable self-introduction on outcomes as the quality of images is a potential moderating variable.
+
+
+One important issue of applying the structural topic modeling is overfitting, especially when we have a  large number of covariates. We tried to measure the model's accuracy by residual sum of squares on both training set and testing test. However, at this point, we haven't figured out how to predict the new topic prevalences for the testing set. Also there are many remaining questions for this to work. For example, should we measure the accuracy by the average of 9 RSSs? If we use Lasso regression to select a subset of covariates, how should we make the interpretation as there could be different covariates in 9 regressions?
+
 
 # Conclusion
 
+In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. Moreover, we feel excited to learn how other teams use UML to address the research problems creatively during the working group and final presentation. This experience greatly arises our interest to study more UML methods in the future.
+
+
+
+
+
 \newpage
 # Appendices
+
+## Kmeans Code
+
+```{r code = readLines(knitr::purl(here("Clustering", "Kmeans.Rmd"), documentation = 1)), echo = T, eval = F}
+
+```
 
 ## AGNES Code
 
@@ -171,6 +264,12 @@ The project faces several limitations at this stage. Firstly, without data on th
 ## Doc2Vec Code
 
 ```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Doc2Vec_Modelling.ipynb"))), echo = T, eval = F}
+
+```
+
+## Structural topic modeling Code
+
+```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-demo+dbscan.Rmd"), documentation = 1)), echo = T, eval = F}
 
 ```
 
