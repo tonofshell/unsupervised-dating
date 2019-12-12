@@ -171,11 +171,11 @@ In the preparation step, we use `textProcessor` function to stem the words and r
 
 Then we estimate the model for the topic prevalence using 9 topic models. During the estimation, the proportions of 9 topics are regressed on the metadata. There are many ways to visualize the results. The following plot shows the expected topic proportions 
 
-![Top Topic](Plots/toptopic.jpeg)
+![Top Topic](Plots/toptopics.jpeg)
 
 The proportions across 9 topics do not have a large gap, as the most common topic is 0.14 and the least common one is 0.10. We observe that the top three topics seem to consist of common nouns and verbs that are not very memorable. So we further explore the most frequent words in the model for both the most common topics (#5, #4, and #7) and the least common topics (#1, #2, and #9). 
 
-![Most Common Topics](Plots/top3topic.jpeg) ![Least Common Topics](Plots/bottom3topic.jpeg)
+![Most Common Topics](Plots/top3topics.jpeg) ![Least Common Topics](Plots/bottom3topics.jpeg)
 
 Although it's hard to tell the quantified difference, we find the words in the least common topics are a little more memorable, such as 'intelligent' and 'dance'. 
 
@@ -187,7 +187,7 @@ In particular, we plot these two plots on the same line. Topic #6 is about 'frie
 
 Also, `topicCorr()` calculates correlations between topics, where positive correlations mean that both topics are likely to be discussed within a document.
 
-![Topic Networks](Plots/network.jpeg) 
+<!--![Topic Networks](Plots/network.jpeg)-->
 
 For the OkCupid beginners, it will be helpful if they could learn what topics are they expected to write together. However, this would only make an ordinary self-introduction. To make it really memorable and stand out, they should consider writing a few topics that are unique and quirky.
 
