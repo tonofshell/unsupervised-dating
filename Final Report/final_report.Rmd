@@ -297,6 +297,12 @@ Below is all the source code used for this project, which is available on the Gi
 
 ```
 
+## LDA Topic modeling Code
+
+```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-okcupid-cluster.Rmd"), documentation = 1)), echo = T, eval = F}
+
+```
+
 ## Structural topic modeling Code
 
 ```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-demo+dbscan.Rmd"), documentation = 1)), echo = T, eval = F}
