@@ -236,8 +236,9 @@ One important issue of applying the structural topic modeling is overfitting, es
 
 # Conclusion
 
-In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. Moreover, we feel excited to learn how other teams use UML to address the research problems creatively during the working group and final presentation. This experience greatly arises our interest to study more UML methods in the future.
+In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. A factor analysis may be useful for future analysis as the variables driving choice of words- such as cognitive skills, cultural attitudes, personality traits are likely to be latent and unobservable factors. Association rule mining would further discover the interesting associations within people's demographics or find certain phrases in self-introductions that often occur together.
 
+Lastly, we want to express our excitement for learning these useful tools from the UML class. Also we would like to thank you Dr. Waggoner and our classmates for providing valuable feedback during the two rounds of presentation. This experience greatly arises our interest to study more UML methods in the future.
 
 
 
