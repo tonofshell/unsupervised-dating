@@ -152,12 +152,12 @@ However, although the plots suggest some differences, we don't know if they are 
 
 As a result, we return to the LDA approach. We choose the topics based on semantic coherence scores. 
 
-![Optimal Number of Topics](optimaltopics.png)
+![Optimal Number of Topics](Plots/optimaltopics.png)
 The plot above suggests 25 topics yields the highest score, but 9 topics yields a good score as well. So we further calculate perplexity , which is regarded as the model's "surprise" at the data. The perplexities are 3261and 3265 for 9 and 25 topics, respectively. Thus, we fix 9 topics for the following analysis.
 
 Next, we fit a LDA topic model with 9 topics where each document is labeled with cluster number (1, 2, 3). 
 
-![Top Words Associated With Each Topics](topicprop.png)
+![Top Words Associated With Each Topics](Plots/topicprop.png)
 This plot shows that for Cluster 1, almost all topics are associated with the common words  such as "life, time, friends". This result is somewhat discouraging as we cannot draw any insights from it. The topic proportion plots are almost identical for Cluster 2 and Cluster 3.
 
 
@@ -267,6 +267,19 @@ Lastly, we want to express our excitement for learning these useful tools from t
 
 Below is all the source code used for this project, which is available on the GitHub repo for this project: [https://github.com/tonofshell/unsupervised-dating](https://github.com/tonofshell/unsupervised-dating)
 
+Here is the contents for you to navigate:
+
+* Kmeans Code
+* AGNES Code 
+* DBSCAN Code
+* Doc2Vec Code
+* Data Filtering Code
+* LDA Topic modeling Code
+* Structural topic modeling Code
+* Word Clouds
+
+
+
 ## Kmeans Code
 
 ```{r code = readLines(knitr::purl(here("Clustering", "Kmeans.Rmd"), documentation = 1)), echo = T, eval = F}
@@ -308,6 +321,18 @@ Below is all the source code used for this project, which is available on the Gi
 ```{r code = readLines(knitr::purl(here("Structural Topic Models", "stm-demo+dbscan.Rmd"), documentation = 1)), echo = T, eval = F}
 
 ```
+
+## Word Clouds Visualization (Code inside the previous chunk)
+
+![Topic 1](Plots/topic1.png)
+![Topic 2](Plots/topic2.png)
+![Topic 3](Plots/topic3.png)
+![Topic 4](Plots/topic4.png)
+![Topic 5](Plots/topic5.png)
+![Topic 6](Plots/topic6.png)
+![Topic 7](Plots/topic7.png)
+![Topic 8](Plots/topic8.png)
+![Topic 9](Plots/topic9.png)
 
 
 

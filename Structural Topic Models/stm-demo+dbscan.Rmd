@@ -120,7 +120,7 @@ dev.off()
 
 
 ```{r}
-cloud(Fit, topic = 1)
+cloud(Fit, topic = 9)
 ```
 
 ## Word cloud display 
