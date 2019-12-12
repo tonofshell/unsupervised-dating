@@ -141,6 +141,25 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 
 A topic is defined as a mixture of words where each word has a probability of generating from a topic. The example would be words such as 'books', 'college', 'MOOC' could come from the topic of study. A document is a mixture of topics, where a single document can have covered multiple topics. The example would be that a user talks about topics related to career, study, hobbies, and religion in the self-introduction.
 
+We start the topic modeling by using the nonnegative matrix factorization (NMF). It is sometimes preferred to Latent Dirichlet allocation (LDA) as it is a deterministic algorithm and assumes that topic probabilities have to be fixed per self-introduction. Also, it is easy to implement with the `gensim` package in Python as we have prior experience with it. We train the NMF topic model with 25 latent topics and then further visualize the proportions of users who use each of the 25 topics most. We also compare the proportions across different levels in the 4 chosen demographic variables.   
+
+![Topic Across Education Level](Plots/NMFeducation.png)
+![Topic Across Fitness Level](Plots/NMFfit.png)
+![Topic Across Height Groups](Plots/NMFheight.png)
+![Topic Across Racial Group](Plots/NMFrace.png)
+
+However, although the plots suggest some differences, we don't know if they are statistically significant and also cannot quantify its association with the topic proportions. 
+
+As a result, we return to the LDA approach. We choose the topics based on semantic coherence scores. 
+
+![Optimal Number of Topics](optimaltopics.png)
+The plot above suggests 25 topics yields the highest score, but 9 topics yields a good score as well. So we further calculate perplexity , which is regarded as the model's "surprise" at the data. The perplexities are 3261and 3265 for 9 and 25 topics, respectively. Thus, we fix 9 topics for the following analysis.
+
+Next, we fit a LDA topic model with 9 topics where each document is labeled with cluster number (1, 2, 3). 
+
+![Top Words Associated With Each Topics](topicprop.png)
+This plot shows that for Cluster 1, almost all topics are associated with the common words  such as "life, time, friends". This result is somewhat discouraging as we cannot draw any insights from it. The topic proportion plots are almost identical for Cluster 2 and Cluster 3.
+
 
 ### DBSCAN
 
