@@ -20,15 +20,15 @@ library(grid)
 library(wordcloud)
 library(wordcloud2)
 library(tidyverse)
-library(igraph)     
+library(igraph)
 library(stmCorrViz)
 ```
 
 ## Read in data
 ```{r data, echo=FALSE}
-setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating')
+setwd('C:/Users/lliu9/Desktop/UML_Project/unsupervised-dating/Data')
 #cleaned okcupid data
-data <- read_csv(here("Data", "final_okcupid.csv"))
+data <- read_csv("final_okcupid.csv")
 
 #data <- sample_n(essay, 100)
 data <- data[c('clean_text', 'fit', 'edu', 'height_group', 'race_ethnicity', 'dbscan_cluster')]
@@ -37,7 +37,7 @@ data <- data[c('clean_text', 'fit', 'edu', 'height_group', 'race_ethnicity', 'db
 ## Clean the data
 ```{r clean}
 processed <- textProcessor(data$clean_text, metadata = data)
-out <- prepDocuments(processed$documents, processed$vocab, 
+out <- prepDocuments(processed$documents, processed$vocab,
                      processed$meta, lower.thresh = 0)
 docs <- out$documents
 vocab <- out$vocab
@@ -66,7 +66,7 @@ prep <- estimateEffect( ~ fit + edu + height_group + race_ethnicity + dbscan_clu
 ```
 
 
-## Estimates a regression where documents are the units, the outcome is the proportion of each document about a topic in an STM model and the covariates are document-meta data. 
+## Estimates a regression where documents are the units, the outcome is the proportion of each document about a topic in an STM model and the covariates are document-meta data.
 ```{r print}
 for (i in seq(1:9)){
     print(summary(prep, topic=i))}
@@ -80,7 +80,7 @@ plot(Fit, type = "summary", xlim = c(0, .3))
 #dev.off
 ```
 
-## The most frequent words in the model such as for top topics 
+## The most frequent words in the model such as for top topics
 
 ```{r labels}
 jpeg('top3topics.jpeg')
@@ -88,7 +88,7 @@ plot(Fit, type="labels", topics=c(5,4,7))
 dev.off()
 ```
 
-## The most frequent words in the model such as for bottom topics 
+## The most frequent words in the model such as for bottom topics
 ```{r labels2}
 jpeg('bottom3topics.jpeg')
 plot(Fit, type="labels", topics=c(1,2,9))
@@ -102,7 +102,7 @@ plot(Fit, type="hist")
 dev.off()
 ```
 
-## A comparison of two topics 
+## A comparison of two topics
 ```{r perspectives}
 jpeg('comparison.jpeg')
 plot(Fit, type="perspectives", topics=c(6,8 ))
@@ -118,12 +118,18 @@ dev.off()
 ```
 
 
-## Word cloud display 
+
+```{r word-cloud}
+cloud(Fit, topic = 1)
+```
+
+## Word cloud display
 ```{r cloud}
 for (i in seq(1:9)){
-    #name <- paste('topic', str(i), '.jpg', sep='')
-    #jpeg(name, width = 350, height = "350")
-    cloud(Fit, topic = i, scale = c(4,0.2) )}
+    name <- paste('topic', str(i), '.jpg', sep='')
+    jpeg(name)
+    cloud(Fit, topic = i, scale = c(4,0.2) )
+    dev.off}
 ```
 
 ## Network
@@ -135,4 +141,3 @@ jpeg('network.jpeg')
 plot(mod.out.corr)
 dev.off()
 ```
-
