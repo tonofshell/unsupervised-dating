@@ -189,7 +189,7 @@ In particular, we plot these two plots on the same line. Topic #6 is about 'frie
 
 Also, `topicCorr()` calculates correlations between topics, where positive correlations mean that both topics are likely to be discussed within a document.
 
-<!--![Topic Networks](Plots/network.jpeg)-->
+![Topic Networks](Plots/network.jpeg)
 
 For the OkCupid beginners, it will be helpful if they could learn what topics are they expected to write together. However, this would only make an ordinary self-introduction. To make it really memorable and stand out, they should consider writing a few topics that are unique and quirky.
 
