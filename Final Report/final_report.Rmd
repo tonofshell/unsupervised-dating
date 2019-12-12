@@ -115,15 +115,15 @@ The demographic data is highly clusterable with a Hopkins Statistic of `r round(
 
 ### K-means
 
-Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gowler's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
+Kmeans is a type of partitioning clustering algorithm to maximize intra-cluster homogeneity and maximize inter-cluster heterogeneity. We use four demographic variables: 'fit', 'education', 'height_group', 'race_ethnicity' as previous research shows evidence these four variables are associated with users' different behavior in online self-introductions. We use Gower's distance as these variables are categorical. We start with 3 clusters and plot with the `fviz_cluster` function.
 
 ![Kmeans with 3 clusters](Plots/kmeans3.png)
 
-Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric doesn't converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
+Then we find the optimal number of clusters by comparing the metric of average silhouette width. However, the metric does not converge and keeps growing with more clusters. As a result, kmeans is not the best for finding the optimal demographic clusters.
 
 ### AGNES
 
-Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches.
+Agglomerative Nesting was used to cluster the demographic data with a bottom-up approach to contrast the K-means clustering. As an AGNES model would not complete on the full data-set, a random subset of 5,000 observations was used instead. This AGNES model used a Gower's dissimilarity matrix of the data to aid in the clustering of categorical variables, since most of the demographic variables are categorical. Using the `NbClust` package in R, we determined that the optimal number of clusters was two, when using the `ward.D2` method to match our AGNES model. The model gives us two well-defined clusters along the first two principal components. The defining factor between these two clusters, majorly appears to be height, which, per the Wilcox Test, has a statistically significant difference between the means of the two clusters by about five inches. The dendrogram and cluster plots were generated using the `factoextra` package in R.
 
 ![NbClust Results](../Clustering/advanced_clustering_files/figure-gfm/agg-nest-3.png)
 
@@ -264,6 +264,12 @@ In this project, we apply different unsupervised machine learning methods learne
 ## Doc2Vec Code
 
 ```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Doc2Vec_Modelling.ipynb"))), echo = T, eval = F}
+
+```
+
+## Data Filtering Code
+
+```{python code = readLines(flatten_jupyter(here("Vector_Space_Model", "Data_Filter.ipynb"))), echo = T, eval = F}
 
 ```
 
