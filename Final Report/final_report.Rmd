@@ -38,31 +38,78 @@ flatten_jupyter = function(path_to_notebook) {
 
 # Contributions
 ```{r contrib, echo=FALSE}
-tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Item 1", "Item 2", "Item 3"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
+tibble(Liu = c("KMeans", "Structural Topic Modeling", "Volunteer for the App Demo"), Pandit = c("Overall Strategy", "Data Cleaning", "Topic Modeling Selection & Doc2Vec Model"), Shelton = c("EDA", "AGNES", "DBSCAN")) %>% kable() %>% kable_styling() %>% row_spec(0, bold = TRUE)
 ```
 
 \newpage
 # Introduction
 
-“So tell me about yourself!’’ This seemingly straightforward question in day-to-day interactions is usually met with silence and hesitation. That can no longer be the case for the 1.67 trillion online dating industry, which has grown exponentially in popularity over the last decade. The dating apps, such as OkCupid and Coffee Meets Bagel, are designed to help the singles ‘get to know’ other people for short or long-term romantic relationships. In order to be popular and memorable, users usually have to write a short introduction to advertise themselves. Such activity could be regarded as self-marketing. As the users of dating apps come from diverse backgrounds, we are interested in how users from distinct backgrounds take different approaches to make themselves more memorable. Moreover, we design the framework of scoring users’ self-introduction and algorithm for providing writing tips (such as words for being memorable). Although our project is still preliminary, it has gained a lot of interest among our friends who struggle to find a date online. Also, our methods and analysis have the potential to be adopted by the dating website to improve the users’ experience and better achieve their mission as matchmakers. 
+“"So tell me about yourself!"’’ 
+
+This seemingly straightforward question in day-to-day interactions is usually met with silence and hesitation. That can no longer be the case for the 1.67 trillion online dating industry, which has grown exponentially in popularity over the last decade. Various dating apps, such as OkCupid and Coffee Meets Bagel, are designed to help the singles ‘get to know’ other people for short or long-term romantic relationships. In order to be popular and memorable, users usually have to write a short introduction to advertise themselves. Such activity could be regarded as self-marketing. As the users of dating apps come from diverse backgrounds, we are interested in how users from distinct backgrounds take different approaches to make themselves more memorable. Moreover, we design the framework of scoring users’ self-introduction and algorithm for providing writing tips (such as words for being memorable). Although our project is still preliminary, it has gained a lot of interest among our friends who struggle to find a date online. Also, our methods and analysis have the potential to be adopted by the dating website to improve the users’ experience and better achieve their mission as matchmakers. 
 
 # Literature Review
 
 Self-concept and self-representation have long served as grounds of debate in cognitive and positive psychology [@bruning1999cognitive] as well as social anthropology [@goffman1975presentation]. The recent spread of social networking and its specific affordances have allowed individuals to build different online ‘selves’ [@papacharissi2010networked]. One such critical scenario may be that of mate selection, which several economists and sociologists have likened this to ‘marriage marketplace’ [@hitsch2010matching]. Several online dating service providers in developed countries may facilitate the expansion of potential mates beyond the limits of even extended offline social networks @cacioppo2013marital assert that as many as one in three marriages in the United States is facilitated through these portals. @heino2010relationshopping argue that these avenues further entrench the economic dimension through an acute, implicit awareness of ‘relationshopping’. Herein, potential partners are reduced to entries in a catalog to be scrolled through. In this sense, they suggest an emerging conscientiousness of ‘marketing’, with the product being themselves, and the potential mate assuming the role of a buyer (ibid). This perception thus links the private worlds of romantic intimacy with those of mass consumption and broader perceived appeal to the opposite sex. 
 
-Potentially, we will also use some marketing theories to understand our findings. Selling themselves and finding a mate on OkCupid is not very different from selling a product on eBay. Economists have been interested in the matching problem of demand and supply, such as @hitsch2010matching. Since we do not have data on users’ interactions, we will focus primarily on understanding how people brand themselves to stand out in a crowd. For example, brand awareness is a key metric in marketing to quantify the degree to which people recall or recognize a brand. A high level of brand awareness helps a product stand out and get chosen when consumers face many alternatives. 
+Potentially, we will also use some marketing theories to understand our findings. In this economic paradigm with a very large number of identical products, the dynamics of the online dating market may resemble models of perfect competition. In such a situation, any product (in this case, person) is perfectly substituable by another. Quick swiping technology only exacerbates this tendency. The only widespread alternative from standard microeconomic theory, is that of monopolistic competition. Here, each product would expend some costs in differentiating themselves from competitors.(Varian, 2014) Varian, Hal R. Intermediate microeconomics with calculus: a modern approach. WW Norton & Company, 2014.), which can involve building distinctive brands. Building brand awareness, in turn requires inter alia- targeting specific niches and adding visual, emotional or linguistic cues that are memorable for later recall. 
 
 This could be applied to understand online dating. Let us imagine your future mate uses the filter to narrow down the consideration sets. He/She might still face many similar choices with high matching scores to choose from. If you want to stand out from the pool, you must make yourself memorable by highlighting the uniqueness. Thus, one possible idea in this project is to explore and understand how users could increase their brand awareness and differentiate themselves in their segments
 
 # Empirical Strategy
 
-This project will leverage a publicly open and anonymized user profile data from OkCupid. In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users as generally male users face more competition among peers.
+This study will leverage publicly open and anonymized user profile data for 59,946 users of OkCupid within a 25 mile radius of San Francisco that were extracted with permission (Kim & Escobedo-Land, 2012). These will then be harnessed to address questions of self-representation in the essay section specifically for male users. To ensure that these were active users, profiles were accepted into dataset only if they had been members as of 06/26/2012,  had been active in the previous year, and had at least one photo in their profile.  The data set includes "typical user information, lifestyle variables, and text responses to 10 essay questions. After their submission, the data were then scraped but with anonymization and removal of personally identifiable information for legal and privacy concerns. We dropped all female users, and male users with missing entries for any of the 4 key variables or essays. This reduced the total sample size to 18330. 
 
-Firstly, we use different cluster analysis to group the users. We would expect users with similar backgrounds to introduce themselves in a similar manner. Since the demographic variables are mostly categorical with many levels and we use the Gowler distance, including them all would be computationally impossible. Instead, we rely on the literature on selecting the four most interesting variables and also apply other techniques to generate new features from the self-introductions.
+Like with several products and services, the user (who is the product in this case) must gain more clarity on three key dimensions of this dating marketplace:
+1) Who his closest competitors are: We will aim to develop 'clusters' of similar users. 
+The clustering could occur either on:
+i) Demographic Variables- Check on categorical variables using Gower's distance
+ii) Text Variables- First by building a Doc2Vec model
+In either case, a Principal Components Analysis will most likely be necessary for dimensionality reduction and being able to visually verify the presence of clusters. 
 
-Secondly, we use topic modeling (LDA) to visualize the latent topics behind the text. We also compare the differences in topic propotions for different groups and clusters of users.
+2) What strategies are the competitors applying- In the absence of photos, the core 'strategies' available are twofold- 
+a) What other men talk about- the content of their essay:
+In terms of our machine learning toolbox, the best approach appears to be that of Topic Modelling. Such an exploration would look for the topics themselves, and what proportions of user profiles are devoted to different topics
 
-Thirdly, we use the structural topic modeling to estimate the impact of the demographic variables and humor measure (DBScan on Doc2Vec vectors) on the topic proportions. 
+The profile may also benefit in terms of memorability from low frequency words, which a Topic Model would typically ignore
+b) How they take about their content:
+This includes a number of aspects, including, but not limited:
+i) Complexity of the Language (measurable by Flesch Index)
+ii) Vocabulary Level (measurable by proportion of long words- with at least 3 syllables)
+iii) Humour- we will need to develop a proxy for this variable. 
+iv) Length of the profile- this is directly measurable by the number of words
+
+3) How to stand out from the competition
+This would require a clear understanding of the previous steps, as well as a similarity score. Such a score could be built using:
+a) cosine Similarity in the DOc2Vec Model(purely text), which could then be subsetted using demographic information represented by the cluster
+b) Check for topic distributions in their demographic and recommend deviations. This would be enabled (at least in part) by Structural Topic Modelling
+
+As would evident from above, there are 4 major methods we will be harnessing:
+1) Doc2Vec, Clustering and Topic Modeling on Text Variables
+2) Clustering on Demographic Variables
+3) Combining Demographic and Text Variables through Structural Topic Models
+
+In particular, we will use several key demographic variables and the self-introduction text. Also, we currently focus on only male users.This is for two reasons:
+1) Women in the US typically accord 50% higher importance to their suitors' descriptions relative to men (who place greater weight on the photos) (Emory, 2017)
+2) Most American dating sites (with a few exceptions) feature a higher proportion of male users, thus resulting in higher competition (Thottam, 2019)
+
+Our preparations proceed in three steps:
+
+First, we fine tune our demographic variables. Besides the choice of 'male' for gender (and 'straight' for orientation, since our focus is on heterosexual users), 12 other variables with multiple levels are available. Choice will need to be guided by theory. Our key statistical assumption is that difference in the text are CAUSED by differences in demographics. In this sense, we would seek to consider those demographics whose values may lead men to alter their choice of language. Through research, we found these to be:
+
+1) Education: Through perceived improvements in earning power as well as use of language (Torkey, 2018), (Fiore et al, 2015), (Stevens & Schaefer, 1990)
+2) Height: Shepperd & Strattman (1989) OkCupid (2010)- More biological preference for taller men. Men also overstate their height on average. Using the 1st quartile as a cutoff, we split this group into short and not short. 
+3) Race:  Lindqvist and Lin, 2010- Online preferences veer towards homophily within races
+4) Fitness Level: Burke, 2019- Based on their choice of photos, it seems that men (if not the women themselves) consider physique to be an importnant determinant of attractiveness
+
+
+Thottam, Isabel '10 Online Dating Statistics You Should Know;, E-harmony.com. Retrieved from: https://www.eharmony.com/online-dating-statistics/
+Emory, Leah(2017), Bustle. 'How Many People Who Meet On Dating Apps Get Married? Swiping Isn't Just For Hookups', Retrieved from - https://www.bustle.com/p/how-many-people-who-meet-on-dating-apps-get-married-swiping-isnt-just-for-hookups-44359
+
+
+Secondly, we use topic modeling (LDA) to visualize the latent topics behind the text. We also compare the differences in topic proportions for different groups and clusters of users. We attempt this with both Non-Negative Matrix Factorization (NMF) and Latent Dirichlet Allocation, given its connections with other tools such as Structural Topic Models
+
+Thirdly, we use the structural topic modeling to estimate the impact of the demographic variables and the humor measure (DBScan on Doc2Vec vectors) on the topic proportions. 
 
 Lastly, we discuss the potential use of our analysis and also acknowledge the challenges and limitations we face at this stage.
 
@@ -133,7 +180,11 @@ Agglomerative Nesting was used to cluster the demographic data with a bottom-up 
 
 ## Text Analysis
 
-### Word2Vec
+### Word2Vec and Doc2Vec
+
+Word2Vec is a two-layer neural network that assigns scores to a word in high-dimensional vector space based on its surrounding context of words. Each vector in this space may capture abstract representations of meaning in a specific language. Doc2Vec extends this representation to documents by averaging word2vec scores across documents.The 'documents' in this case are the dating profile essays themselves. 
+
+We harness the Gensim library in Python, build a corpus of our 18000 texts and then build a 300-dimensional vector space based on standard recommendations for the English language. Through experimentation with different model sizes (optimizing for efficiency of code on the linguistic composition of our specific data), we choose the top 50 most influential vectors, i.e.- whose abstract dimensions may be combined to convey the majority of 'meaning'in our data. 
 
 ### Topic Modeling
 
@@ -141,6 +192,8 @@ A topic is defined as a mixture of words where each word has a probability of ge
 
 
 ### DBSCAN
+
+As stated earlierthe Doc2Vec model failed to produce any meaningful clusters
 
 As we wanted to determine factors behind why a profile might stick out, we decided to use 
 a DBSCAN model was used to detect outliers within a data-set of 50 vectors calculated by Doc2Vec. As Doc2Vec vectors capture different characteristics about the text, any outliers in these vectors should be profiles that deviate from the norm to some degree. As shown below, these Doc2Vec vectors are highly independent with very few correlations, but also highly clusterable, with a Hopkins Statistic of 0.808.
@@ -230,12 +283,15 @@ The project faces several limitations at this stage. Firstly, without data on th
 
 # Conclusion
 
-In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. Moreover, we feel excited to learn how other teams use UML to address the research problems creatively during the working group and final presentation. This experience greatly arises our interest to study more UML methods in the future.
+In this project, we apply different unsupervised machine learning methods learned from class, especially clustering and text mining. Although we have got some interesting results, we realize that there are many other alternative methods that are potentially helpful, such as factor model and association rule mining. Moreover, we feel excited to learn how other teams use UML to address the research problems creatively during the working group and final presentation. This experience greatly increases our interest to study more UML methods in the future.
 
 
 
 \newpage
 # Appendices
+
+## Data Cleaning Code
+
 
 ## Kmeans Code
 
